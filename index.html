@@ -54,11 +54,9 @@
 <script>
 (function () {
   // ====== НАСТРОЙКИ ======
-  // ID вашей Google Таблицы
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  
-  var FORM_ID = ""; // ID блока формы на Tilda (если нужно передавать расчет)
-  var MAILTO = "zakaz@example.com"; // Почта, если формы нет
+  var FORM_ID = ""; 
+  var MAILTO = "zakaz@example.com"; 
 
   var DATA = {}; 
 
@@ -71,31 +69,48 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Шаг 1: Загрузка данных из Google Sheets
   var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
 
   fetch(url)
-    .then(response => response.text())
-    .then(csvText => {
+    .then(function(response) { return response.text(); })
+    .then(function(csvText) {
       parseCsvData(csvText);
       initCalc();
     })
-    .catch(err => {
+    .catch(function(err) {
       console.error(err);
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
 
-  // CSV-парсер с учетом возможных кавычек
+  function parseCsvLine(line) {
+    var arr = [];
+    var quote = false;
+    var cell = "";
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') {
+        quote = !quote;
+      } else if (c === ',' && !quote) {
+        arr.push(cell);
+        cell = "";
+      } else {
+        cell += c;
+      }
+    }
+    arr.push(cell);
+    return arr.map(function(v) { return v.replace(/^"|"$/g, ''); });
+  }
+
   function parseCsvData(text) {
     var lines = text.split(/\r?\n/);
     if(lines.length < 2) return;
     
-    var headers = parseCsvLine(lines[0]);
-    var idxBrand = headers.findIndex(h => h.toLowerCase() === 'brand');
-    var idxModel = headers.findIndex(h => h.toLowerCase() === 'model');
-    var idxProblem = headers.findIndex(h => h.toLowerCase() === 'problem');
-    var idxPrice = headers.findIndex(h => h.toLowerCase() === 'price');
-    var idxDesc = headers.findIndex(h => h.toLowerCase() === 'description');
+    var headers = parseCsvLine(lines[0]).map(function(h) { return h.toLowerCase().trim(); });
+    var idxBrand = headers.indexOf('brand');
+    var idxModel = headers.indexOf('model');
+    var idxProblem = headers.indexOf('problem');
+    var idxPrice = headers.indexOf('price');
+    var idxDesc = headers.indexOf('description');
 
     if(idxBrand === -1) { idxBrand = 0; idxModel = 1; idxProblem = 2; idxPrice = 3; idxDesc = 4; }
 
@@ -119,26 +134,6 @@
     }
   }
 
-  function parseCsvLine(line) {
-    var arr = [];
-    var quote = false;
-    var cell = "";
-    for (var i = 0; i < line.length; i++) {
-      var c = line[i];
-      if (c === '"') {
-        quote = !quote;
-      } else if (c === ',' && !quote) {
-        arr.push(cell);
-        cell = "";
-      } else {
-        cell += c;
-      }
-    }
-    arr.push(cell);
-    return arr.map(v => v.replace(/^"|"$/g, ''));
-  }
-
-  // Шаг 2: Логика работы калькулятора
   function initCalc() {
     var brands = Object.keys(DATA);
     if(brands.length === 0) {
@@ -147,11 +142,9 @@
     }
 
     elLoader.style.display = 'none';
-    elCalcBody.style.opacity = 1;
     elCalcBody.style.display = 'block';
 
-    // Рендер Брендов
-    elBrand.innerHTML = brands.map(b => '<option value="'+b+'">'+b+'</option>').join('');
+    elBrand.innerHTML = brands.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
 
     elBrand.addEventListener('change', function () {
       updateModels(this.value);
@@ -161,10 +154,8 @@
       updateProblems(elBrand.value, this.value);
     });
 
-    // Стартовая инициализация
     updateModels(brands[0]);
     
-    // Кнопка заявки
     elCta.addEventListener('click', function() {
       sendOrder();
     });
@@ -172,12 +163,14 @@
 
   function updateModels(brand) {
     var models = Object.keys(DATA[brand] || {});
-    elModel.innerHTML = models.map(m => '<option value="'+m+'">'+m+'</option>').join('');
-    updateProblems(brand, models[0]);
+    elModel.innerHTML = models.map(function(m) { return '<option value="'+m+'">'+m+'</option>'; }).join('');
+    if(models.length > 0) {
+      updateProblems(brand, models[0]);
+    }
   }
 
   function updateProblems(brand, model) {
-    var problems = DATA[brand]?.[model] || {};
+    var problems = DATA[brand] && DATA[brand][model] ? DATA[brand][model] : {};
     var html = '';
     
     for (var name in problems) {
@@ -194,7 +187,6 @@
     }
     elList.innerHTML = html;
 
-    // Вешаем клики на чекбоксы
     var items = elList.querySelectorAll('.rp-item');
     items.forEach(function(item) {
       item.addEventListener('click', function(e) {
