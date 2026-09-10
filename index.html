@@ -1,4 +1,4 @@
-<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С ДИЗАЙНОМ TILDA И ПРЯМОЙ ЗАГРУЗКОЙ ================= -->
+<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С ДИЗАЙНОМ TILDA И ГАРАНТИРОВАННОЙ ЗАГРУЗКОЙ ================= -->
 <div class="rp-wrap" style="max-width: 600px; margin: 40px auto; font-family: Arial, sans-serif; background: #ffffff; padding: 10px 20px; box-sizing: border-box;">
   <div id="rpLoader" style="text-align: center; color: #666666; padding: 40px 0; font-size: 16px; font-weight: 500;">Загрузка актуальных цен...</div>
   
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Заголовок списка поломок -->
-    <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Что случилось с телефоном (можно выбрать несколько)</span>
+    <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">What happened to the phone (you can choose several)</span>
     
     <!-- Сюда вставляются карточки поломок -->
     <div id="rpList"></div>
@@ -34,6 +34,7 @@
 
 <script>
 (function () {
+  // Чистый ID вашей таблицы без лишних хвостиков ссылки
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
   var FORM_ID = ""; 
   var MAILTO = "zakaz@example.com"; 
@@ -48,15 +49,17 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Прямой легальный запрос к Google Visualization API (возвращает чистый JSON)
-  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  // Очищенный легальный запрос к Google API
+  var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
     .then(function(res) { return res.text(); })
     .then(function(text) {
-      // Очищаем ответ Google от технической обертки
+      // Жесткая очистка ответа от любых оберток Google
       var start = text.indexOf('{');
       var end = text.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error("Неверный формат ответа Google");
+      
       var jsonString = text.substring(start, end + 1);
       var json = JSON.parse(jsonString);
       
@@ -69,10 +72,9 @@
     });
 
   function parseGoogleJson(json) {
+    if (!json.table || !json.table.rows) return;
     var rows = json.table.rows;
-    if (!rows || rows.length === 0) return;
 
-    // Закрепляем порядок: 0-Brand, 1-Model, 2-Problem, 3-Price, 4-Description
     var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
 
     for (var i = 0; i < rows.length; i++) {
@@ -99,7 +101,7 @@
   function initCalc() {
     var brands = Object.keys(DATA);
     if(brands.length === 0) {
-      elLoader.innerText = "Таблица пустая или заполнена неверно.";
+      elLoader.innerText = "Ошибка разбора таблицы. Проверьте данные.";
       return;
     }
 
