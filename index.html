@@ -1,38 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Калькулятор ремонта</title>
+<style>
+  :root {
+    --rp-accent: #4f46e5;
+    --rp-accent-light: #eef2ff;
+    --rp-bg: #f4f5fb;
+    --rp-card: #ffffff;
+    --rp-text: #111827;
+    --rp-text-2: #6b7280;
+    --rp-border: #e5e7eb;
+    --rp-radius: 16px;
+    --rp-shadow: 0 20px 50px -12px rgba(17, 24, 39, .12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--rp-bg);
+    color: var(--rp-text);
+    line-height: 1.45;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .rp-wrap { max-width: 680px; margin: 0 auto; }
+
+  /* ---------- Загрузка ---------- */
+  .rp-loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--rp-text-2);
+    font-size: 15px;
+  }
+  .rp-loading::before {
+    content: "";
+    display: block;
+    width: 36px; height: 36px;
+    margin: 0 auto 16px;
+    border: 3px solid var(--rp-border);
+    border-top-color: var(--rp-accent);
+    border-radius: 50%;
+    animation: rp-spin 0.8s linear infinite;
+  }
+  @keyframes rp-spin { to { transform: rotate(360deg); } }
+
+  /* ---------- Карточка ---------- */
+  #rpCalcBody {
+    background: var(--rp-card);
+    border-radius: var(--rp-radius);
+    box-shadow: var(--rp-shadow);
+    padding: 28px 28px 24px;
+  }
+
+  .rp-head { margin-bottom: 24px; }
+  .rp-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .rp-subtitle { font-size: 14px; color: var(--rp-text-2); margin-top: 6px; }
+
+  /* ---------- Селекты ---------- */
+  .rp-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--rp-text-2);
+    margin-bottom: 8px;
+  }
+  .rp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 540px) { .rp-grid { grid-template-columns: 1fr; } }
+
+  .rp-select-wrap { position: relative; }
+  .rp-select-wrap::after {
+    content: "";
+    position: absolute;
+    right: 16px; top: 50%;
+    width: 8px; height: 8px;
+    border-right: 2px solid var(--rp-text-2);
+    border-bottom: 2px solid var(--rp-text-2);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  .rp-select {
+    width: 100%;
+    padding: 14px 40px 14px 16px;
+    border: 1.5px solid var(--rp-border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--rp-text);
+    background: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .rp-select:hover { border-color: #c7cbd6; }
+  .rp-select:focus {
+    outline: none;
+    border-color: var(--rp-accent);
+    box-shadow: 0 0 0 4px var(--rp-accent-light);
+  }
+
+  /* ---------- Список поломок ---------- */
+  .rp-list-title { margin-bottom: 4px; }
+  .rp-list-hint { font-size: 13px; color: var(--rp-text-2); margin-bottom: 12px; }
+
+  #rpList { display: flex; flex-direction: column; gap: 10px; }
+
+  .rp-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--rp-border);
+    border-radius: 14px;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color .15s, background .15s, transform .1s;
+    user-select: none;
+  }
+  .rp-item:hover { border-color: #c7cbd6; }
+  .rp-item:active { transform: scale(0.995); }
+  .rp-item.on {
+    border-color: var(--rp-accent);
+    background: var(--rp-accent-light);
+  }
+
+  .rp-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+    border: 2px solid #c7cbd6;
+    border-radius: 7px;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    transition: background .15s, border-color .15s;
+    margin: 0;
+  }
+  .rp-item input[type="checkbox"]:hover { border-color: var(--rp-accent); }
+  .rp-item input[type="checkbox"]:checked {
+    background: var(--rp-accent);
+    border-color: var(--rp-accent);
+  }
+  .rp-item input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 6px; top: 2px;
+    width: 5px; height: 10px;
+    border: solid #fff;
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+
+  .rp-body { flex: 1; min-width: 0; }
+  .rp-name { font-size: 15px; font-weight: 600; }
+  .rp-desc { font-size: 13px; color: var(--rp-text-2); margin-top: 2px; }
+
+  .rp-price {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--rp-text-2);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    transition: color .15s;
+  }
+  .rp-item.on .rp-price { color: var(--rp-accent); }
+
+  /* ---------- Итог ---------- */
+  .rp-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #111827, #1f2937);
+    border-radius: 14px;
+    color: #fff;
+  }
+  .rp-total-label { font-size: 14px; color: #9ca3af; }
+  .rp-total-val {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .rp-cta {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 17px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--rp-accent), #7c3aed);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform .12s, box-shadow .15s, filter .15s;
+    box-shadow: 0 10px 24px -8px rgba(79, 70, 229, .55);
+  }
+  .rp-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .rp-cta:active { transform: translateY(0); }
+  .rp-cta:disabled { opacity: .6; cursor: default; }
+
+  .rp-foot {
+    text-align: center;
+    font-size: 12px;
+    color: var(--rp-text-2);
+    margin-top: 16px;
+  }
+</style>
+</head>
+<body>
+
 <div class="rp-wrap">
   <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
-  
+
   <div id="rpCalcBody" style="display: none;">
+    <div class="rp-head">
+      <div class="rp-title">Калькулятор стоимости ремонта</div>
+      <div class="rp-subtitle">Выберите модель и отметьте, что случилось с телефоном</div>
+    </div>
+
     <div class="rp-grid">
       <div>
         <span class="rp-label">Бренд</span>
-        <select class="rp-select" id="rpBrand"></select>
+        <div class="rp-select-wrap">
+          <select class="rp-select" id="rpBrand"></select>
+        </div>
       </div>
       <div>
         <span class="rp-label">Модель</span>
-        <select class="rp-select" id="rpModel"></select>
+        <div class="rp-select-wrap">
+          <select class="rp-select" id="rpModel"></select>
+        </div>
       </div>
     </div>
 
-    <span class="rp-label">Что случилось с телефоном (можно выбрать несколько)</span>
+    <span class="rp-label rp-list-title">Что случилось с телефоном</span>
+    <div class="rp-list-hint">Можно выбрать несколько поломок</div>
     <div id="rpList"></div>
 
     <div class="rp-total">
-      <span class="rp-total-label">Итого</span>
+      <span class="rp-total-label">Итого к оплате</span>
       <span class="rp-total-val" id="rpTotal">0 ₽</span>
     </div>
 
-    <button class="rp-cta" id="rpCta" type="button">Оформить заявку</button>
+    <button class="rp-cta" id="rpCta" type="button">Оформить заявку на ремонт</button>
+    <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически</div>
   </div>
 </div>
 
 <script>
 (function () {
   // Настройки подключения к вашей таблице
-  var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  var FORM_ID = ""; 
-  var MAILTO = "zakaz@example.com"; 
+  var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o";
+  var FORM_ID = "";
+  var MAILTO = "zakaz@example.com";
 
-  var DATA = {}; 
+  var DATA = {};
 
   var elLoader = document.getElementById('rpLoader');
   var elCalcBody = document.getElementById('rpCalcBody');
@@ -52,7 +293,7 @@
       var end = text.lastIndexOf('}');
       var jsonString = text.substring(start, end + 1);
       var json = JSON.parse(jsonString);
-      
+
       parseGoogleJson(json);
       initCalc();
     })
@@ -83,7 +324,7 @@
 
       if (!DATA[brand]) DATA[brand] = {};
       if (!DATA[brand][model]) DATA[brand][model] = {};
-      
+
       DATA[brand][model][problem] = { p: price, d: desc };
     }
   }
@@ -108,8 +349,8 @@
       updateProblems(elBrand.value, this.value);
     });
 
-    updateModels(brands);
-    
+    updateModels(brands[0]);
+
     elCta.addEventListener('click', function() {
       sendOrder();
     });
@@ -119,14 +360,14 @@
     var models = Object.keys(DATA[brand] || {});
     elModel.innerHTML = models.map(function(m) { return '<option value="'+m+'">'+m+'</option>'; }).join('');
     if(models.length > 0) {
-      updateProblems(brand, models);
+      updateProblems(brand, models[0]);
     }
   }
 
   function updateProblems(brand, model) {
     var problems = DATA[brand] && DATA[brand][model] ? DATA[brand][model] : {};
     var html = '';
-    
+
     for (var name in problems) {
       var item = problems[name];
       var priceStr = item.p.toLocaleString('ru-RU') + ' ₽';
@@ -195,8 +436,11 @@
         }
       }
     }
-    
+
     window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт с сайта") + "&body=" + encodeURIComponent(message);
   }
 })();
 </script>
+
+</body>
+</html>
