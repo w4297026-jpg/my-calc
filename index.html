@@ -48,7 +48,7 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Указываем явное имя вашей вкладки таблицы (&sheet=Лист1) во избежание пустых ответов API
+  // Идеально чистая ссылка строго на вашу вкладку "Лист1"
   var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent('Лист1');
 
   fetch(url)
