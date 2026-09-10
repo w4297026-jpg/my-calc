@@ -303,7 +303,7 @@
         Написать в Telegram
       </a>
     </div>
-    <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 10% за каждую услугу.</div>
+    <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 7% за каждую услугу, начиная со второй.</div>
   </div>
 </div>
 
@@ -435,8 +435,9 @@
     calcTotal();
   }
 
-  // Скидка: 10% за каждую выбранную услугу (5 услуг = 50%), максимум 90%
-  var DISCOUNT_PER_ITEM = 10;
+  // Скидка: 7% за каждую выбранную услугу, но не за первую.
+  // 2 услуги = 7%, 3 = 14%, 5 = 28%. Максимум 90%.
+  var DISCOUNT_PER_ITEM = 7;
   var DISCOUNT_MAX = 90;
 
   function getChecked() {
@@ -449,7 +450,7 @@
       sum += parseInt(chk.closest('.rp-item').getAttribute('data-price'), 10);
     });
     var count = getChecked().length;
-    var pct = Math.min(count * DISCOUNT_PER_ITEM, DISCOUNT_MAX);
+    var pct = count >= 2 ? Math.min((count - 1) * DISCOUNT_PER_ITEM, DISCOUNT_MAX) : 0;
     var discount = Math.round(sum * pct / 100);
     var total = sum - discount;
 
