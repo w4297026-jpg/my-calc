@@ -7,8 +7,9 @@
 <title>Калькулятор ремонта</title>
 <style>
   :root {
-    --rp-accent: #4f46e5;
-    --rp-accent-light: #eef2ff;
+    --rp-accent: #fbbf24;
+    --rp-accent-dark: #f59e0b;
+    --rp-accent-light: #fef9e7;
     --rp-bg: #f4f5fb;
     --rp-card: #ffffff;
     --rp-text: #111827;
@@ -44,7 +45,7 @@
     width: 36px; height: 36px;
     margin: 0 auto 16px;
     border: 3px solid var(--rp-border);
-    border-top-color: var(--rp-accent);
+    border-top-color: var(--rp-accent-dark);
     border-radius: 50%;
     animation: rp-spin 0.8s linear infinite;
   }
@@ -133,7 +134,7 @@
   .rp-item:hover { border-color: #c7cbd6; }
   .rp-item:active { transform: scale(0.995); }
   .rp-item.on {
-    border-color: var(--rp-accent);
+    border-color: var(--rp-accent-dark);
     background: var(--rp-accent-light);
   }
 
@@ -150,10 +151,13 @@
     transition: background .15s, border-color .15s;
     margin: 0;
   }
-  .rp-item input[type="checkbox"]:hover { border-color: var(--rp-accent); }
+  .rp-item input[type="checkbox"]:hover { border-color: var(--rp-accent-dark); }
   .rp-item input[type="checkbox"]:checked {
     background: var(--rp-accent);
-    border-color: var(--rp-accent);
+    border-color: var(--rp-accent-dark);
+  }
+  .rp-item input[type="checkbox"]:checked::after {
+    border-color: #7c2d12;
   }
   .rp-item input[type="checkbox"]:checked::after {
     content: "";
@@ -198,25 +202,47 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .rp-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  @media (max-width: 480px) { .rp-cta-row { grid-template-columns: 1fr; } }
+
   .rp-cta {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
-    margin-top: 14px;
-    padding: 17px;
-    border: none;
+    padding: 16px;
     border-radius: 14px;
-    background: linear-gradient(135deg, var(--rp-accent), #7c3aed);
-    color: #fff;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.01em;
     cursor: pointer;
+    text-decoration: none;
     transition: transform .12s, box-shadow .15s, filter .15s;
-    box-shadow: 0 10px 24px -8px rgba(79, 70, 229, .55);
   }
-  .rp-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
-  .rp-cta:active { transform: translateY(0); }
-  .rp-cta:disabled { opacity: .6; cursor: default; }
+  .rp-cta svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+  .rp-cta-call {
+    background: var(--rp-accent);
+    color: #78350f;
+    border: 2px solid var(--rp-accent-dark);
+    box-shadow: 0 10px 24px -8px rgba(245, 158, 11, .5);
+  }
+  .rp-cta-call:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  .rp-cta-call:active { transform: translateY(0); }
+
+  .rp-cta-tg {
+    background: #fff;
+    color: var(--rp-accent-dark);
+    border: 2px solid var(--rp-accent-dark);
+  }
+  .rp-cta-tg:hover { background: var(--rp-accent-light); transform: translateY(-1px); }
+  .rp-cta-tg:active { transform: translateY(0); }
+
+  /* строка скидки в панели итога */
+  .rp-total-rows { display: flex; flex-direction: column; gap: 4px; }
+  .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; }
+  .rp-total-row .rp-discount-val { color: var(--rp-accent); font-weight: 700; font-variant-numeric: tabular-nums; }
 
   .rp-foot {
     text-align: center;
@@ -257,12 +283,27 @@
     <div id="rpList"></div>
 
     <div class="rp-total">
-      <span class="rp-total-label">Итого к оплате</span>
+      <div class="rp-total-rows">
+        <div class="rp-total-row" id="rpDiscountRow" style="display:none;">
+          <span>Скидка <span id="rpDiscountPct">0%</span></span>
+          <span class="rp-discount-val" id="rpDiscountVal">−0 ₽</span>
+        </div>
+        <span class="rp-total-label">Итого к оплате</span>
+      </div>
       <span class="rp-total-val" id="rpTotal">0 ₽</span>
     </div>
 
-    <button class="rp-cta" id="rpCta" type="button">Оформить заявку на ремонт</button>
-    <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически</div>
+    <div class="rp-cta-row">
+      <a class="rp-cta rp-cta-call" href="tel:+74952042751">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Позвонить
+      </a>
+      <a class="rp-cta rp-cta-tg" id="rpTg" href="https://t.me/imoment_master" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 1 0 24 12 12 12 0 0 0 11.94 0zm5.89 8.16-1.97 9.3c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.12.84.9z"/></svg>
+        Написать в Telegram
+      </a>
+    </div>
+    <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 10% за каждую услугу.</div>
   </div>
 </div>
 
@@ -271,7 +312,7 @@
   // Настройки подключения к вашей таблице
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o";
   var FORM_ID = "";
-  var MAILTO = "zakaz@example.com";
+  var PHONE_DISPLAY = "+7 (495) 204-27-51";
 
   var DATA = {};
 
@@ -351,9 +392,6 @@
 
     updateModels(brands[0]);
 
-    elCta.addEventListener('click', function() {
-      sendOrder();
-    });
   }
 
   function updateModels(brand) {
@@ -397,13 +435,53 @@
     calcTotal();
   }
 
+  // Скидка: 10% за каждую выбранную услугу (5 услуг = 50%), максимум 90%
+  var DISCOUNT_PER_ITEM = 10;
+  var DISCOUNT_MAX = 90;
+
+  function getChecked() {
+    return elList.querySelectorAll('.rp-item input:checked');
+  }
+
   function calcTotal() {
-    var total = 0;
-    var checked = elList.querySelectorAll('.rp-item input:checked');
-    checked.forEach(function(chk) {
-      total += parseInt(chk.closest('.rp-item').getAttribute('data-price'), 10);
+    var sum = 0;
+    getChecked().forEach(function(chk) {
+      sum += parseInt(chk.closest('.rp-item').getAttribute('data-price'), 10);
     });
+    var count = getChecked().length;
+    var pct = Math.min(count * DISCOUNT_PER_ITEM, DISCOUNT_MAX);
+    var discount = Math.round(sum * pct / 100);
+    var total = sum - discount;
+
+    var row = document.getElementById('rpDiscountRow');
+    if (count > 0 && pct > 0) {
+      row.style.display = 'flex';
+      document.getElementById('rpDiscountPct').innerText = pct + '%';
+      document.getElementById('rpDiscountVal').innerText = '−' + discount.toLocaleString('ru-RU') + ' ₽';
+    } else {
+      row.style.display = 'none';
+    }
+
     elTotal.innerText = total.toLocaleString('ru-RU') + ' ₽';
+    updateTelegramLink(sum, pct, discount, total);
+  }
+
+  function updateTelegramLink(sum, pct, discount, total) {
+    var selected = [];
+    getChecked().forEach(function(chk) {
+      selected.push(chk.closest('.rp-item').getAttribute('data-name'));
+    });
+    var text;
+    if (selected.length === 0) {
+      text = 'Здравствуйте! Хочу узнать стоимость ремонта телефона.';
+    } else {
+      text = 'Здравствуйте! Хочу записаться на ремонт.\n' +
+             'Телефон: ' + elBrand.value + ' ' + elModel.value + '\n' +
+             'Что чинить: ' + selected.join(', ') + '\n' +
+             (pct > 0 ? 'Скидка: ' + pct + '% (−' + discount.toLocaleString('ru-RU') + ' ₽)\n' : '') +
+             'Итого по калькулятору: ' + total.toLocaleString('ru-RU') + ' ₽';
+    }
+    document.getElementById('rpTg').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
   }
 
   function sendOrder() {
@@ -425,19 +503,8 @@
                   "Что починить: " + selected.join(', ') + "\n" +
                   "Стоимость: " + total;
 
-    if (FORM_ID) {
-      var formBlock = document.getElementById(FORM_ID) || document.querySelector('.' + FORM_ID);
-      if (formBlock) {
-        var textarea = formBlock.querySelector('textarea');
-        if (textarea) {
-          textarea.value = message;
-          formBlock.scrollIntoView({ behavior: 'smooth' });
-          return;
-        }
-      }
-    }
-
-    window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт с сайта") + "&body=" + encodeURIComponent(message);
+    // При нажатии — звонок в сервис
+    window.location.href = "tel:+74952042751";
   }
 })();
 </script>
