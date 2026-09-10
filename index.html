@@ -1,29 +1,3 @@
-<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С АВТООБНОВЛЕНИЕМ ИЗ GOOGLE ТАБЛИЦ ================= -->
-<style>
-  .rp-wrap { max-width: 640px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  .rp-wrap * { box-sizing: border-box; }
-  .rp-label { display: block; font-size: 13px; color: #777; margin-bottom: 6px; }
-  .rp-select { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: #fff; color: #111; height: 46px; }
-  .rp-select:focus { border-color: #111; outline: none; }
-  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  @media (max-width: 480px) { .rp-grid { grid-template-columns: 1fr; } }
-  .rp-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; background: #fff; }
-  .rp-item:hover { border-color: #bbb; }
-  .rp-item.on { border-color: #111; }
-  .rp-item input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: #111; flex-shrink: 0; }
-  .rp-body { flex: 1; min-width: 0; }
-  .rp-name { font-size: 15px; font-weight: 600; color: #111; }
-  .rp-desc { font-size: 13px; color: #888; margin-top: 2px; }
-  .rp-price { font-size: 15px; color: #666; font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 1px; }
-  .rp-item.on .rp-price { color: #111; font-weight: 600; }
-  .rp-total { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0 14px; border-top: 1px solid #e5e5e5; margin-top: 16px; }
-  .rp-total-label { font-size: 14px; color: #777; }
-  .rp-total-val { font-size: 30px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
-  .rp-cta { display: block; width: 100%; padding: 14px; border: none; border-radius: 8px; background: #111; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
-  .rp-cta:hover { opacity: .85; }
-  .rp-loading { text-align: center; color: #888; padding: 20px; font-size: 15px; }
-</style>
-
 <div class="rp-wrap">
   <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
   
@@ -53,6 +27,7 @@
 
 <script>
 (function () {
+  // Настройки подключения к вашей таблице
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
   var FORM_ID = ""; 
   var MAILTO = "zakaz@example.com"; 
@@ -67,7 +42,8 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  // Запрос к Google Sheets API
+  var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
     .then(function(res) { return res.text(); })
