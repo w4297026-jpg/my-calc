@@ -1,144 +1,34 @@
-<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА В ДИЗАЙНЕ ШАБЛОНА TILDA DRIVERS ================= -->
-<style>
-  /* Основной контейнер в фирменных отступах и границах Tilda */
-  .rp-wrap { 
-    max-width: 640px; 
-    margin: 40px auto; 
-    font-family: Arial, sans-serif; 
-    background: #ffffff;
-    padding: 0 20px;
-  }
-  .rp-wrap * { box-sizing: border-box; }
-  
-  /* Подписи к полям ввода в стиле Tilda (мелкие, серые) */
-  .rp-label { 
-    display: block; 
-    font-size: 14px; 
-    color: #000000; 
-    opacity: 0.7;
-    margin-bottom: 8px; 
-  }
-  
-  /* Выпадающие списки (строгие прямоугольные формы Tilda) */
-  .rp-select { 
-    width: 100%; 
-    padding: 0 15px; 
-    border: 1px solid #d6d6d6; 
-    border-radius: 0px; /* В этом шаблоне Tilda углы у полей ввода прямые */
-    font-size: 16px; 
-    background: #ffffff; 
-    color: #000000; 
-    height: 50px; 
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 15px center;
-    background-size: 14px;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-  }
-  .rp-select:focus { border-color: #000000; outline: none; }
-  
-  /* Сетка выбора параметров */
-  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 24px; }
-  @media (max-width: 480px) { .rp-grid { grid-template-columns: 1fr; } .rp-wrap { padding: 0 10px; } }
-  
-  /* Карточки поломок (аккуратные тонкие рамки без теней) */
-  .rp-item { 
-    display: flex; 
-    align-items: center; 
-    gap: 14px; 
-    padding: 16px 18px;
-    border: 1px solid #e2e2e2; 
-    border-radius: 0px; /* Строгие прямые углы */
-    margin-bottom: 12px; 
-    cursor: pointer; 
-    transition: all 0.2s ease; 
-    background: #ffffff; 
-  }
-  .rp-item:hover { border-color: #000000; }
-  /* При выборе карточка подсвечивается легким фоном в стиле Tilda */
-  .rp-item.on { border-color: #000000; background: #f9f9f9; } 
-  
-  /* Прямоугольный чекбокс */
-  .rp-item input { 
-    width: 18px; 
-    height: 18px; 
-    margin: 0; 
-    accent-color: #111111; 
-    flex-shrink: 0; 
-  }
-  .rp-body { flex: 1; min-width: 0; }
-  /* Шрифты и полужирное начертание заголовков как в тарифах автошколы */
-  .rp-name { font-size: 16px; font-weight: 700; color: #000000; letter-spacing: -0.5px; }
-  .rp-desc { font-size: 13px; color: #666666; margin-top: 4px; line-height: 1.4; }
-  
-  /* Цена услуги (крупная, акцентная) */
-  .rp-price { 
-    font-size: 16px; 
-    color: #000000; 
-    font-weight: 700;
-    font-variant-numeric: tabular-nums; 
-    white-space: nowrap; 
-    padding-left: 10px;
-  }
-  
-  /* Блок «Итого» */
-  .rp-total { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: baseline; 
-    padding: 24px 0 20px; 
-    border-top: 1px solid #e2e2e2; 
-    margin-top: 24px; 
-  }
-  .rp-total-label { font-size: 16px; font-weight: 700; color: #000000; text-transform: uppercase; letter-spacing: 1px; }
-  .rp-total-val { font-size: 36px; font-weight: 700; color: #000000; font-variant-numeric: tabular-nums; }
-  
-  /* Фирменная глубокая черно-синяя кнопка из шаблона Drivers */
-  .rp-cta { 
-    display: block; 
-    width: 100%; 
-    padding: 16px; 
-    border: none; 
-    border-radius: 0px; /* Строгая прямоугольная кнопка в стиле Drivers */
-    background: #111424; /* Оригинальный цвет кнопок «Записаться» из шаблона автошколы */
-    color: #ffffff; 
-    font-size: 16px; 
-    font-weight: 700;
-    cursor: pointer; 
-    transition: background 0.2s ease; 
-    text-align: center;
-    letter-spacing: 0.5px;
-  }
-  .rp-cta:hover { background: #232840; } /* Плавное изменение цвета при наведении */
-  .rp-loading { text-align: center; color: #666666; padding: 40px 0; font-size: 16px; }
-</style>
-
-<div class="rp-wrap">
-  <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
+<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С ВШИТЫМ ДИЗАЙНОМ ПОД ШАБЛОН DRIVERS ================= -->
+<div class="rp-wrap" style="max-width: 600px; margin: 40px auto; font-family: Arial, sans-serif; background: #ffffff; padding: 10px 20px; box-sizing: border-box;">
+  <div id="rpLoader" style="text-align: center; color: #666666; padding: 40px 0; font-size: 16px; font-weight: 500;">Загрузка актуальных цен...</div>
   
   <div id="rpCalcBody" style="display: none;">
-    <div class="rp-grid">
+    <!-- Поля выбора Бренд и Модель -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 24px;">
       <div>
-        <span class="rp-label">Бренд</span>
-        <select class="rp-select" id="rpBrand"></select>
+        <span style="display: block; font-size: 14px; color: #000000; opacity: 0.7; margin-bottom: 8px;">Бренд</span>
+        <select id="rpBrand" style="width: 100%; padding: 0 15px; border: 1px solid #d6d6d6; border-radius: 0px; font-size: 16px; background: #ffffff; color: #000000; height: 50px; cursor: pointer; box-sizing: border-box;"></select>
       </div>
       <div>
-        <span class="rp-label">Модель</span>
-        <select class="rp-select" id="rpModel"></select>
+        <span style="display: block; font-size: 14px; color: #000000; opacity: 0.7; margin-bottom: 8px;">Модель</span>
+        <select id="rpModel" style="width: 100%; padding: 0 15px; border: 1px solid #d6d6d6; border-radius: 0px; font-size: 16px; background: #ffffff; color: #000000; height: 50px; cursor: pointer; box-sizing: border-box;"></select>
       </div>
     </div>
 
-    <span class="rp-label" style="margin-bottom: 12px; font-weight: 700; color: #000;">Что случилось с телефоном (можно выбрать несколько)</span>
+    <!-- Заголовок списка поломок -->
+    <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Что случилось с телефоном</span>
+    
+    <!-- Сюда скрипт вставит карточки поломок -->
     <div id="rpList"></div>
 
-    <div class="rp-total">
-      <span class="rp-total-label">Итого</span>
-      <span class="rp-total-val" id="rpTotal">0 ₽</span>
+    <!-- Блок Итого -->
+    <div style="display: flex; justify-content: space-between; align-items: baseline; padding: 24px 0 20px; border-top: 1px solid #e2e2e2; margin-top: 24px;">
+      <span style="font-size: 16px; font-weight: 700; color: #000000; text-transform: uppercase; letter-spacing: 1px;">Итого</span>
+      <span id="rpTotal" style="font-size: 36px; font-weight: 700; color: #000000; font-variant-numeric: tabular-nums;">0 ₽</span>
     </div>
 
-    <button class="rp-cta" id="rpCta" type="button">Оформить заявку</button>
+    <!-- Кнопка заявки в фирменном стиле Drivers -->
+    <button id="rpCta" type="button" style="display: block; width: 100%; padding: 16px; border: none; border-radius: 0px; background: #111424; color: #ffffff; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; letter-spacing: 0.5px; transition: background 0.2s ease;">Оформить заявку</button>
   </div>
 </div>
 
@@ -228,6 +118,10 @@
     elCta.addEventListener('click', function() {
       sendOrder();
     });
+    
+    // Эффект наведения на кнопку
+    elCta.addEventListener('mouseover', function() { this.style.background = '#232840'; });
+    elCta.addEventListener('mouseout', function() { this.style.background = '#111424'; });
   }
 
   function updateModels(brand) {
@@ -245,17 +139,20 @@
     for (var name in problems) {
       var item = problems[name];
       var priceStr = item.p.toLocaleString('ru-RU') + ' ₽';
-      html += '<div class="rp-item" data-name="'+name+'" data-price="'+item.p+'">' +
-                '<input type="checkbox">' +
-                '<div class="rp-body">' +
-                  '<div class="rp-name">' + name + '</div>' +
-                  (item.d ? '<div class="rp-desc">' + item.d + '</div>' : '') +
+      
+      // Сборка красивой карточки поломки с жестко вшитыми стилями
+      html += '<div class="rp-item" data-name="'+name+'" data-price="'+item.p+'" style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid #e2e2e2; margin-bottom: 12px; cursor: pointer; background: #ffffff; box-sizing: border-box;">' +
+                '<input type="checkbox" style="width: 18px; height: 18px; margin: 0; accent-color: #111111; flex-shrink: 0; cursor: pointer;">' +
+                '<div style="flex: 1; min-width: 0;">' +
+                  '<div style="font-size: 16px; font-weight: 700; color: #000000; letter-spacing: -0.5px;">' + name + '</div>' +
+                  (item.d ? '<div style="font-size: 13px; color: #666666; margin-top: 4px; line-height: 1.4;">' + item.d + '</div>' : '') +
                 '</div>' +
-                '<div class="rp-price">' + priceStr + '</div>' +
+                '<div style="font-size: 16px; font-weight: 700; color: #000000; font-variant-numeric: tabular-nums; white-space: nowrap; padding-left: 10px;">' + priceStr + '</div>' +
               '</div>';
     }
     elList.innerHTML = html;
 
+    // Навешиваем обработчики кликов и смену стилей активной карточки
     var items = elList.querySelectorAll('.rp-item');
     items.forEach(function(item) {
       item.addEventListener('click', function(e) {
@@ -263,8 +160,26 @@
         if (e.target !== chk) {
           chk.checked = !chk.checked;
         }
-        this.classList.toggle('on', chk.checked);
+        
+        // Визуальное выделение карточки при клике
+        if(chk.checked) {
+          this.style.borderColor = '#000000';
+          this.style.background = '#f9f9f9';
+        } else {
+          this.style.borderColor = '#e2e2e2';
+          this.style.background = '#ffffff';
+        }
         calcTotal();
+      });
+      
+      // Эффект наведения на карточку поломки
+      item.addEventListener('mouseover', function() {
+        var chk = this.querySelector('input');
+        if(!chk.checked) this.style.borderColor = '#000000';
+      });
+      item.addEventListener('mouseout', function() {
+        var chk = this.querySelector('input');
+        if(!chk.checked) this.style.borderColor = '#e2e2e2';
       });
     });
 
@@ -296,3 +211,22 @@
     }
 
     var message = "Заявка на ремонт: " + brand + " " + model + "\n" +
+                  "Что починить: " + selected.join(', ') + "\n" +
+                  "Стоимость: " + total;
+
+    if (FORM_ID) {
+      var formBlock = document.getElementById(FORM_ID) || document.querySelector('.' + FORM_ID);
+      if (formBlock) {
+        var textarea = formBlock.querySelector('textarea');
+        if (textarea) {
+          textarea.value = message;
+          formBlock.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+    
+    window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт") + "&body=" + encodeURIComponent(message);
+  }
+})();
+</script>
