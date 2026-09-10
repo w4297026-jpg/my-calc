@@ -54,7 +54,7 @@
 <script>
 (function () {
   // ====== НАСТРОЙКИ ======
-  // ВСТАВЬТЕ СЮДА ID СВОЕЙ GOOGLE ТАБЛИЦЫ:
+  // ID вашей Google Таблицы
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
   
   var FORM_ID = ""; // ID блока формы на Tilda (если нужно передавать расчет)
@@ -71,7 +71,7 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Шаг 1: Загрузка данных из Google Sheets без использования API ключей
+  // Шаг 1: Загрузка данных из Google Sheets
   var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
 
   fetch(url)
@@ -85,12 +85,11 @@
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
 
-  // Простой CSV-парсер с учетом возможных кавычек
+  // CSV-парсер с учетом возможных кавычек
   function parseCsvData(text) {
     var lines = text.split(/\r?\n/);
     if(lines.length < 2) return;
     
-    // Определяем индексы колонок по первой строке
     var headers = parseCsvLine(lines[0]);
     var idxBrand = headers.findIndex(h => h.toLowerCase() === 'brand');
     var idxModel = headers.findIndex(h => h.toLowerCase() === 'model');
@@ -98,7 +97,6 @@
     var idxPrice = headers.findIndex(h => h.toLowerCase() === 'price');
     var idxDesc = headers.findIndex(h => h.toLowerCase() === 'description');
 
-    // Если колонки не найдены по именам, берем стандартный порядок 0,1,2,3,4
     if(idxBrand === -1) { idxBrand = 0; idxModel = 1; idxProblem = 2; idxPrice = 3; idxDesc = 4; }
 
     for (var i = 1; i < lines.length; i++) {
@@ -149,7 +147,7 @@
     }
 
     elLoader.style.display = 'none';
-    elCalcBody.style.styleOpacity = 0;
+    elCalcBody.style.opacity = 1;
     elCalcBody.style.display = 'block';
 
     // Рендер Брендов
@@ -241,20 +239,17 @@
                   "Стоимость: " + total;
 
     if (FORM_ID) {
-      // Пытаемся найти форму Tilda и вставить данные туда
       var formBlock = document.getElementById(FORM_ID) || document.querySelector('.' + FORM_ID);
       if (formBlock) {
         var textarea = formBlock.querySelector('textarea');
         if (textarea) {
           textarea.value = message;
-          // Скроллим к форме
           formBlock.scrollIntoView({ behavior: 'smooth' });
           return;
         }
       }
     }
     
-    // Если форма не настроена, открываем почту
     window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт с сайта") + "&body=" + encodeURIComponent(message);
   }
 })();
