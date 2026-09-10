@@ -48,7 +48,9 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  // Защита от блокировок Google: пускаем запрос через стабильный публичный прокси-сервер
+  var targetUrl = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  var url = 'https://allorigins.win' + encodeURIComponent(targetUrl);
 
   fetch(url)
     .then(function(res) { return res.text(); })
@@ -119,7 +121,6 @@
       sendOrder();
     });
     
-    // Эффект наведения на кнопку
     elCta.addEventListener('mouseover', function() { this.style.background = '#232840'; });
     elCta.addEventListener('mouseout', function() { this.style.background = '#111424'; });
   }
@@ -140,7 +141,6 @@
       var item = problems[name];
       var priceStr = item.p.toLocaleString('ru-RU') + ' ₽';
       
-      // Сборка красивой карточки поломки с жестко вшитыми стилями
       html += '<div class="rp-item" data-name="'+name+'" data-price="'+item.p+'" style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid #e2e2e2; margin-bottom: 12px; cursor: pointer; background: #ffffff; box-sizing: border-box;">' +
                 '<input type="checkbox" style="width: 18px; height: 18px; margin: 0; accent-color: #111111; flex-shrink: 0; cursor: pointer;">' +
                 '<div style="flex: 1; min-width: 0;">' +
@@ -152,7 +152,6 @@
     }
     elList.innerHTML = html;
 
-    // Навешиваем обработчики кликов и смену стилей активной карточки
     var items = elList.querySelectorAll('.rp-item');
     items.forEach(function(item) {
       item.addEventListener('click', function(e) {
@@ -161,7 +160,6 @@
           chk.checked = !chk.checked;
         }
         
-        // Визуальное выделение карточки при клике
         if(chk.checked) {
           this.style.borderColor = '#000000';
           this.style.background = '#f9f9f9';
@@ -172,7 +170,6 @@
         calcTotal();
       });
       
-      // Эффект наведения на карточку поломки
       item.addEventListener('mouseover', function() {
         var chk = this.querySelector('input');
         if(!chk.checked) this.style.borderColor = '#000000';
