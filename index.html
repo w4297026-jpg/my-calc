@@ -54,9 +54,11 @@
 <script>
 (function () {
   // ====== НАСТРОЙКИ ======
+  // ID вашей Google Таблицы
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  var FORM_ID = ""; 
-  var MAILTO = "zakaz@example.com"; 
+  
+  var FORM_ID = ""; // ID блока формы на Tilda (если нужно передавать расчет в форму)
+  var MAILTO = "zakaz@example.com"; // Почта для заявок, если формы нет
 
   var DATA = {}; 
 
@@ -69,7 +71,9 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
+  // Шаг 1: Загрузка данных через обходной прокси-сервер во избежание CORS блокировок
+  var rawUrl = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
+  var url = 'https://allorigins.win' + encodeURIComponent(rawUrl);
 
   fetch(url)
     .then(function(response) { return response.text(); })
@@ -82,6 +86,7 @@
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
 
+  // CSV-парсер с разбором экранирования кавычек
   function parseCsvLine(line) {
     var arr = [];
     var quote = false;
@@ -105,7 +110,7 @@
     var lines = text.split(/\r?\n/);
     if(lines.length < 2) return;
     
-    var headers = parseCsvLine(lines[0]).map(function(h) { return h.toLowerCase().trim(); });
+    var headers = parseCsvLine(lines).map(function(h) { return h.toLowerCase().trim(); });
     var idxBrand = headers.indexOf('brand');
     var idxModel = headers.indexOf('model');
     var idxProblem = headers.indexOf('problem');
@@ -134,6 +139,7 @@
     }
   }
 
+  // Шаг 2: Логика работы калькулятора
   function initCalc() {
     var brands = Object.keys(DATA);
     if(brands.length === 0) {
