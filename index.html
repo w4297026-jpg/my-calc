@@ -1,0 +1,261 @@
+<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С АВТООБНОВЛЕНИЕМ ИЗ GOOGLE ТАБЛИЦ ================= -->
+<style>
+  .rp-wrap { max-width: 640px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .rp-wrap * { box-sizing: border-box; }
+  .rp-label { display: block; font-size: 13px; color: #777; margin-bottom: 6px; }
+  .rp-select { width: 100%; padding: 12px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background: #fff; color: #111; height: 46px; }
+  .rp-select:focus { border-color: #111; outline: none; }
+  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 480px) { .rp-grid { grid-template-columns: 1fr; } }
+  .rp-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border: 1px solid #e5e5e5; border-radius: 8px; margin-bottom: 8px; cursor: pointer; transition: border-color .15s; background: #fff; }
+  .rp-item:hover { border-color: #bbb; }
+  .rp-item.on { border-color: #111; }
+  .rp-item input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: #111; flex-shrink: 0; }
+  .rp-body { flex: 1; min-width: 0; }
+  .rp-name { font-size: 15px; font-weight: 600; color: #111; }
+  .rp-desc { font-size: 13px; color: #888; margin-top: 2px; }
+  .rp-price { font-size: 15px; color: #666; font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 1px; }
+  .rp-item.on .rp-price { color: #111; font-weight: 600; }
+  .rp-total { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0 14px; border-top: 1px solid #e5e5e5; margin-top: 16px; }
+  .rp-total-label { font-size: 14px; color: #777; }
+  .rp-total-val { font-size: 30px; font-weight: 700; color: #111; font-variant-numeric: tabular-nums; }
+  .rp-cta { display: block; width: 100%; padding: 14px; border: none; border-radius: 8px; background: #111; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+  .rp-cta:hover { opacity: .85; }
+  .rp-loading { text-align: center; color: #888; padding: 20px; font-size: 15px; }
+</style>
+
+<div class="rp-wrap">
+  <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
+  
+  <div id="rpCalcBody" style="display: none;">
+    <div class="rp-grid">
+      <div>
+        <span class="rp-label">Бренд</span>
+        <select class="rp-select" id="rpBrand"></select>
+      </div>
+      <div>
+        <span class="rp-label">Модель</span>
+        <select class="rp-select" id="rpModel"></select>
+      </div>
+    </div>
+
+    <span class="rp-label">Что случилось с телефоном (можно выбрать несколько)</span>
+    <div id="rpList"></div>
+
+    <div class="rp-total">
+      <span class="rp-total-label">Итого</span>
+      <span class="rp-total-val" id="rpTotal">0 ₽</span>
+    </div>
+
+    <button class="rp-cta" id="rpCta" type="button">Оформить заявку</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ====== НАСТРОЙКИ ======
+  // ВСТАВЬТЕ СЮДА ID СВОЕЙ GOOGLE ТАБЛИЦЫ:
+  var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
+  
+  var FORM_ID = ""; // ID блока формы на Tilda (если нужно передавать расчет)
+  var MAILTO = "zakaz@example.com"; // Почта, если формы нет
+
+  var DATA = {}; 
+
+  // DOM Элементы
+  var elLoader = document.getElementById('rpLoader');
+  var elCalcBody = document.getElementById('rpCalcBody');
+  var elBrand = document.getElementById('rpBrand');
+  var elModel = document.getElementById('rpModel');
+  var elList = document.getElementById('rpList');
+  var elTotal = document.getElementById('rpTotal');
+  var elCta = document.getElementById('rpCta');
+
+  // Шаг 1: Загрузка данных из Google Sheets без использования API ключей
+  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
+
+  fetch(url)
+    .then(response => response.text())
+    .then(csvText => {
+      parseCsvData(csvText);
+      initCalc();
+    })
+    .catch(err => {
+      console.error(err);
+      elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
+    });
+
+  // Простой CSV-парсер с учетом возможных кавычек
+  function parseCsvData(text) {
+    var lines = text.split(/\r?\n/);
+    if(lines.length < 2) return;
+    
+    // Определяем индексы колонок по первой строке
+    var headers = parseCsvLine(lines[0]);
+    var idxBrand = headers.findIndex(h => h.toLowerCase() === 'brand');
+    var idxModel = headers.findIndex(h => h.toLowerCase() === 'model');
+    var idxProblem = headers.findIndex(h => h.toLowerCase() === 'problem');
+    var idxPrice = headers.findIndex(h => h.toLowerCase() === 'price');
+    var idxDesc = headers.findIndex(h => h.toLowerCase() === 'description');
+
+    // Если колонки не найдены по именам, берем стандартный порядок 0,1,2,3,4
+    if(idxBrand === -1) { idxBrand = 0; idxModel = 1; idxProblem = 2; idxPrice = 3; idxDesc = 4; }
+
+    for (var i = 1; i < lines.length; i++) {
+      if (!lines[i].trim()) continue;
+      var cells = parseCsvLine(lines[i]);
+      if(cells.length < 4) continue;
+
+      var brand = cells[idxBrand].trim();
+      var model = cells[idxModel].trim();
+      var problem = cells[idxProblem].trim();
+      var price = parseInt(cells[idxPrice].replace(/\s/g, ''), 10) || 0;
+      var desc = cells[idxDesc] ? cells[idxDesc].trim() : "";
+
+      if(!brand || !model || !problem) continue;
+
+      if (!DATA[brand]) DATA[brand] = {};
+      if (!DATA[brand][model]) DATA[brand][model] = {};
+      
+      DATA[brand][model][problem] = { p: price, d: desc };
+    }
+  }
+
+  function parseCsvLine(line) {
+    var arr = [];
+    var quote = false;
+    var cell = "";
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (c === '"') {
+        quote = !quote;
+      } else if (c === ',' && !quote) {
+        arr.push(cell);
+        cell = "";
+      } else {
+        cell += c;
+      }
+    }
+    arr.push(cell);
+    return arr.map(v => v.replace(/^"|"$/g, ''));
+  }
+
+  // Шаг 2: Логика работы калькулятора
+  function initCalc() {
+    var brands = Object.keys(DATA);
+    if(brands.length === 0) {
+      elLoader.innerText = "Таблица пустая или заполнена неверно.";
+      return;
+    }
+
+    elLoader.style.display = 'none';
+    elCalcBody.style.styleOpacity = 0;
+    elCalcBody.style.display = 'block';
+
+    // Рендер Брендов
+    elBrand.innerHTML = brands.map(b => '<option value="'+b+'">'+b+'</option>').join('');
+
+    elBrand.addEventListener('change', function () {
+      updateModels(this.value);
+    });
+
+    elModel.addEventListener('change', function () {
+      updateProblems(elBrand.value, this.value);
+    });
+
+    // Стартовая инициализация
+    updateModels(brands[0]);
+    
+    // Кнопка заявки
+    elCta.addEventListener('click', function() {
+      sendOrder();
+    });
+  }
+
+  function updateModels(brand) {
+    var models = Object.keys(DATA[brand] || {});
+    elModel.innerHTML = models.map(m => '<option value="'+m+'">'+m+'</option>').join('');
+    updateProblems(brand, models[0]);
+  }
+
+  function updateProblems(brand, model) {
+    var problems = DATA[brand]?.[model] || {};
+    var html = '';
+    
+    for (var name in problems) {
+      var item = problems[name];
+      var priceStr = item.p.toLocaleString('ru-RU') + ' ₽';
+      html += '<div class="rp-item" data-name="'+name+'" data-price="'+item.p+'">' +
+                '<input type="checkbox">' +
+                '<div class="rp-body">' +
+                  '<div class="rp-name">' + name + '</div>' +
+                  (item.d ? '<div class="rp-desc">' + item.d + '</div>' : '') +
+                '</div>' +
+                '<div class="rp-price">' + priceStr + '</div>' +
+              '</div>';
+    }
+    elList.innerHTML = html;
+
+    // Вешаем клики на чекбоксы
+    var items = elList.querySelectorAll('.rp-item');
+    items.forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        var chk = this.querySelector('input');
+        if (e.target !== chk) {
+          chk.checked = !chk.checked;
+        }
+        this.classList.toggle('on', chk.checked);
+        calcTotal();
+      });
+    });
+
+    calcTotal();
+  }
+
+  function calcTotal() {
+    var total = 0;
+    var checked = elList.querySelectorAll('.rp-item input:checked');
+    checked.forEach(function(chk) {
+      total += parseInt(chk.closest('.rp-item').getAttribute('data-price'), 10);
+    });
+    elTotal.innerText = total.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  function sendOrder() {
+    var brand = elBrand.value;
+    var model = elModel.value;
+    var selected = [];
+    var total = elTotal.innerText;
+
+    elList.querySelectorAll('.rp-item input:checked').forEach(function(chk) {
+      selected.push(chk.closest('.rp-item').getAttribute('data-name'));
+    });
+
+    if(selected.length === 0) {
+      alert('Пожалуйста, выберите хотя бы одну поломку.');
+      return;
+    }
+
+    var message = "Заявка на ремонт: " + brand + " " + model + "\n" +
+                  "Что починить: " + selected.join(', ') + "\n" +
+                  "Стоимость: " + total;
+
+    if (FORM_ID) {
+      // Пытаемся найти форму Tilda и вставить данные туда
+      var formBlock = document.getElementById(FORM_ID) || document.querySelector('.' + FORM_ID);
+      if (formBlock) {
+        var textarea = formBlock.querySelector('textarea');
+        if (textarea) {
+          textarea.value = message;
+          // Скроллим к форме
+          formBlock.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+    
+    // Если форма не настроена, открываем почту
+    window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт с сайта") + "&body=" + encodeURIComponent(message);
+  }
+})();
+</script>
