@@ -239,6 +239,22 @@
   .rp-cta-tg:hover { background: var(--rp-accent-light); transform: translateY(-1px); }
   .rp-cta-tg:active { transform: translateY(0); }
 
+  /* плашка определения устройства */
+  .rp-detect {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin: -12px 0 20px;
+    padding: 10px 14px;
+    background: var(--rp-accent-light);
+    border: 1.5px dashed var(--rp-accent-dark);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--rp-accent-dark);
+  }
+  .rp-detect.show { display: flex; }
+  .rp-detect svg { width: 16px; height: 16px; flex-shrink: 0; }
+
   /* строка скидки в панели итога */
   .rp-total-rows { display: flex; flex-direction: column; gap: 4px; }
   .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; }
@@ -276,6 +292,11 @@
           <select class="rp-select" id="rpModel"></select>
         </div>
       </div>
+    </div>
+
+    <div class="rp-detect" id="rpDetect">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+      <span id="rpDetectText"></span>
     </div>
 
     <span class="rp-label rp-list-title">Что случилось с телефоном</span>
@@ -392,6 +413,92 @@
 
     updateModels(brands[0]);
 
+    applyDetectedDevice(brands);
+  }
+
+  // ====== Определение устройства посетителя ======
+  // Samsung: коды моделей SM-XXXX
+  var SAMSUNG_CODES = {
+    'SM-S938': 'Galaxy S25 Ultra', 'SM-S935': 'Galaxy S25+', 'SM-S931': 'Galaxy S25',
+    'SM-S928': 'Galaxy S24 Ultra', 'SM-S926': 'Galaxy S24+',  'SM-S921': 'Galaxy S24',
+    'SM-S918': 'Galaxy S23 Ultra', 'SM-S916': 'Galaxy S23+',  'SM-S911': 'Galaxy S23',
+    'SM-S908': 'Galaxy S22 Ultra', 'SM-S906': 'Galaxy S22+',  'SM-S901': 'Galaxy S22',
+    'SM-G998': 'Galaxy S21 Ultra', 'SM-G996': 'Galaxy S21+',  'SM-G991': 'Galaxy S21',
+    'SM-F956': 'Galaxy Z Fold 6',  'SM-F946': 'Galaxy Z Fold 5',
+    'SM-F741': 'Galaxy Z Flip 6',  'SM-F731': 'Galaxy Z Flip 5',
+    'SM-N986': 'Galaxy Note 20 Ultra', 'SM-N985': 'Galaxy Note 20 Ultra',
+    'SM-A566': 'Galaxy A56', 'SM-A556': 'Galaxy A55', 'SM-A546': 'Galaxy A54',
+    'SM-A536': 'Galaxy A53', 'SM-A526': 'Galaxy A52', 'SM-A356': 'Galaxy A35',
+    'SM-A346': 'Galaxy A34', 'SM-A256': 'Galaxy A25', 'SM-A246': 'Galaxy A24',
+    'SM-A155': 'Galaxy A15', 'SM-A145': 'Galaxy A14', 'SM-M346': 'Galaxy M34',
+    'SM-M546': 'Galaxy M54', 'SM-J730': 'Galaxy J7'
+  };
+
+  function detectDevice() {
+    var ua = navigator.userAgent;
+
+    // iPhone: Apple скрывает модель — известен только факт «это iPhone»
+    if (/iPhone/.test(ua)) return { brand: 'iPhone', model: null };
+
+    // Android: модель обычно идёт после версии Android
+    var m = ua.match(/Android[\d.]*;\s*([^;)]+)/i);
+    var token = m ? m[1].trim() : '';
+    if (!token) return null;
+    token = token.replace(/^\w+\s+\w+\s+/, ''); // отсекаем служебные префиксы
+
+    // Samsung по коду SM-XXXX / GT-XXXX
+    var sm = token.match(/SM-[A-Z]?\d{3,4}|GT-I?\d{4}/i);
+    if (sm) {
+      var code = sm[0].toUpperCase().slice(0, 7);
+      return { brand: 'Samsung', model: SAMSUNG_CODES[code] || null };
+    }
+
+    // Поиск названия модели прямо в строке
+    var low = token.toLowerCase();
+    for (var brand in DATA) {
+      for (var model in DATA[brand]) {
+        if (low.indexOf(model.toLowerCase()) !== -1) {
+          return { brand: brand, model: model };
+        }
+      }
+    }
+
+    // Определение бренда по характерным маркерам
+    if (/huawei|harmonyos/i.test(token)) return { brand: 'Huawei', model: null };
+    if (/honor/i.test(token)) return { brand: 'Honor', model: null };
+    if (/redmi|poco|xiaomi/i.test(token)) return { brand: 'Xiaomi', model: null };
+    if (/rmx\d/i.test(token)) return { brand: 'Realme', model: null };
+    if (/cph\d|oppo/i.test(token)) return { brand: 'Oppo', model: null };
+    if (/vivo/i.test(token)) return { brand: 'Vivo', model: null };
+    if (/oneplus/i.test(token)) return { brand: 'OnePlus', model: null };
+    if (/pixel/i.test(token)) return { brand: 'Google', model: null };
+    if (/tecno/i.test(token)) return { brand: 'Tecno', model: null };
+    if (/infinix/i.test(token)) return { brand: 'Infinix', model: null };
+    if (/nokia/i.test(token)) return { brand: 'Nokia', model: null };
+
+    return null;
+  }
+
+  function applyDetectedDevice(brands) {
+    var dev = detectDevice();
+    var badge = document.getElementById('rpDetect');
+    var badgeText = document.getElementById('rpDetectText');
+    if (!dev) return;
+
+    if (brands.indexOf(dev.brand) === -1) return;
+
+    elBrand.value = dev.brand;
+    elBrand.dispatchEvent(new Event('change'));
+
+    if (dev.model && DATA[dev.brand] && DATA[dev.brand][dev.model]) {
+      elModel.value = dev.model;
+      elModel.dispatchEvent(new Event('change'));
+      badgeText.innerText = 'Мы определили ваше устройство: ' + dev.brand + ' ' + dev.model;
+      badge.classList.add('show');
+    } else if (dev.brand === 'iPhone') {
+      badgeText.innerText = 'Вы зашли с iPhone — выберите свою модель в списке выше';
+      badge.classList.add('show');
+    }
   }
 
   function updateModels(brand) {
