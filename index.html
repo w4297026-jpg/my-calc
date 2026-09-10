@@ -1,3 +1,111 @@
+<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С АВТООБНОВЛЕНИЕМ ИЗ GOOGLE ТАБЛИЦ ================= -->
+<style>
+  .rp-wrap { 
+    max-width: 550px; 
+    margin: 40px auto; 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  }
+  .rp-wrap * { box-sizing: border-box; }
+  .rp-label { 
+    display: block; 
+    font-size: 14px; 
+    font-weight: 600;
+    color: #333333; 
+    margin-bottom: 8px; 
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rp-select { 
+    width: 100%; 
+    padding: 0 16px; 
+    border: 1px solid #e0e0e0; 
+    border-radius: 12px; 
+    font-size: 16px; 
+    background: #f9f9f9; 
+    color: #111; 
+    height: 52px; 
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://w3.org' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .rp-select:focus { border-color: #111; background-color: #fff; outline: none; }
+  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 480px) { .rp-grid { grid-template-columns: 1fr; gap: 12px; } .rp-wrap { margin: 15px; padding: 20px; } }
+  
+  .rp-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 14px; 
+    padding: 16px;
+    border: 1px solid #eaeaea; 
+    border-radius: 12px; 
+    margin-bottom: 10px; 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+    background: #fff; 
+  }
+  .rp-item:hover { border-color: #b5b5b5; background: #fafafa; }
+  .rp-item.on { border-color: #111; background: #fcfcfc; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+  .rp-item input { 
+    width: 20px; 
+    height: 20px; 
+    margin: 0; 
+    accent-color: #111; 
+    flex-shrink: 0; 
+    cursor: pointer;
+  }
+  .rp-body { flex: 1; min-width: 0; }
+  .rp-name { font-size: 15px; font-weight: 600; color: #111; line-height: 1.3; }
+  .rp-desc { font-size: 13px; color: #777; margin-top: 4px; line-height: 1.3; }
+  .rp-price { 
+    font-size: 16px; 
+    color: #555; 
+    font-weight: 700;
+    font-variant-numeric: tabular-nums; 
+    white-space: nowrap; 
+    padding-left: 10px;
+  }
+  .rp-item.on .rp-price { color: #111; }
+  
+  .rp-total { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 24px 0 20px; 
+    border-top: 1px solid #eaeaea; 
+    margin-top: 24px; 
+  }
+  .rp-total-label { font-size: 16px; font-weight: 600; color: #555; }
+  .rp-total-val { font-size: 32px; font-weight: 800; color: #111; font-variant-numeric: tabular-nums; }
+  
+  .rp-cta { 
+    display: block; 
+    width: 100%; 
+    padding: 16px; 
+    border: none; 
+    border-radius: 12px; 
+    background: #111; 
+    color: #fff; 
+    font-size: 16px; 
+    font-weight: 600;
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .rp-cta:hover { background: #222; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+  .rp-cta:active { transform: translateY(0); }
+  .rp-loading { text-align: center; color: #888; padding: 40px; font-size: 16px; font-weight: 500; }
+</style>
+
 <div class="rp-wrap">
   <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
   
@@ -13,11 +121,11 @@
       </div>
     </div>
 
-    <span class="rp-label">Что случилось с телефоном (можно выбрать несколько)</span>
+    <span class="rp-label" style="margin-bottom: 12px;">Что случилось с телефоном</span>
     <div id="rpList"></div>
 
     <div class="rp-total">
-      <span class="rp-total-label">Итого</span>
+      <span class="rp-total-label">Итого к оплате:</span>
       <span class="rp-total-val" id="rpTotal">0 ₽</span>
     </div>
 
@@ -27,7 +135,6 @@
 
 <script>
 (function () {
-  // Настройки подключения к вашей таблице
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
   var FORM_ID = ""; 
   var MAILTO = "zakaz@example.com"; 
@@ -42,8 +149,7 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Запрос к Google Sheets API
-  var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
     .then(function(res) { return res.text(); })
@@ -196,7 +302,3 @@
       }
     }
     
-    window.location.href = "mailto:" + MAILTO + "?subject=" + encodeURIComponent("Заявка на ремонт с сайта") + "&body=" + encodeURIComponent(message);
-  }
-})();
-</script>
