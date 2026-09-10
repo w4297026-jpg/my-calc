@@ -54,8 +54,10 @@
 <script>
 (function () {
   // ====== НАСТРОЙКИ ======
+  // Ваш личный ID таблицы из ссылки
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  var FORM_ID = ""; 
+  
+  var FORM_ID = ""; // Сюда потом вставим ID формы Tilda
   var MAILTO = "zakaz@example.com"; 
 
   var DATA = {}; 
@@ -68,17 +70,19 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Запрашиваем как бинарные данные (массив байт) во избежание проблем с UTF-16 / UTF-8 кодировками Google
-  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
+  // Запрашиваем через легальный Visualization API в формате JSON
+  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
-    .then(function(res) { return res.arrayBuffer(); })
-    .then(function(buffer) {
-      // Принудительно декодируем полученный поток в правильный UTF-8 текст
-      var decoder = new TextDecoder('utf-8');
-      var csvText = decoder.decode(buffer);
+    .then(function(res) { return res.text(); })
+    .then(function(text) {
+      // Очищаем ответ Google от технического текста вокружной обертки google.visualization...
+      var start = text.indexOf('{');
+      var end = text.lastIndexOf('}');
+      var jsonString = text.substring(start, end + 1);
+      var json = JSON.parse(jsonString);
       
-      parseCsvData(csvText);
+      parseGoogleJson(json);
       initCalc();
     })
     .catch(function(err) {
@@ -86,51 +90,29 @@
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
 
-  function parseCsvLine(line) {
-    var arr = [];
-    var quote = false;
-    var cell = "";
-    for (var i = 0; i < line.length; i++) {
-      var c = line[i];
-      if (c === '"') {
-        quote = !quote;
-      } else if (c === ',' && !quote) {
-        arr.push(cell);
-        cell = "";
-      } else {
-        cell += c;
-      }
-    }
-    arr.push(cell);
-    return arr.map(function(v) { return v.replace(/^"|"$/g, '').trim(); });
-  }
+  function parseGoogleJson(json) {
+    var rows = json.table.rows;
+    if (!rows || rows.length === 0) return;
 
-  function parseCsvData(text) {
-    var lines = text.split(/\r?\n/);
-    if(lines.length < 2) return;
-    
-    var headers = parseCsvLine(lines[0]).map(function(h) { return h.toLowerCase(); });
-    var idxBrand = headers.indexOf('brand');
-    var idxModel = headers.indexOf('model');
-    var idxProblem = headers.indexOf('problem');
-    var idxPrice = headers.indexOf('price');
-    var idxDesc = headers.indexOf('description');
+    // Закрепляем порядок столбцов: 0-Brand, 1-Model, 2-Problem, 3-Price, 4-Description
+    var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
 
-    if(idxBrand === -1) { idxBrand = 0; idxModel = 1; idxProblem = 2; idxPrice = 3; idxDesc = 4; }
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i].c;
+      if (!row || row.length < 4) continue;
 
-    for (var i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      var cells = parseCsvLine(lines[i]);
-      if(cells.length < 4) continue;
+      // Безопасное вытаскивание строк из структуры Google JSON
+      var brand = row[idxBrand] && row[idxBrand].v !== null ? String(row[idxBrand].v).trim() : "";
+      var model = row[idxModel] && row[idxModel].v !== null ? String(row[idxModel].v).trim() : "";
+      var problem = row[idxProblem] && row[idxProblem].v !== null ? String(row[idxProblem].v).trim() : "";
+      var priceVal = row[idxPrice] && row[idxPrice].v !== null ? row[idxPrice].v : 0;
+      var desc = row[idxDesc] && row[idxDesc].v !== null ? String(row[idxDesc].v).trim() : "";
 
-      var brand = cells[idxBrand];
-      var model = cells[idxModel];
-      var problem = cells[idxProblem];
-      var priceRaw = cells[idxPrice].replace(/[^\d]/g, '');
-      var price = parseInt(priceRaw, 10) || 0;
-      var desc = cells[idxDesc] || "";
+      // Отсекаем заголовок таблицы
+      if (brand.toLowerCase() === 'brand' || !brand || !model || !problem) continue;
 
-      if(!brand || !model || !problem || brand.toLowerCase() === 'brand') continue;
+      // Избавляемся от пробелов в числах, если они есть
+      var price = parseInt(String(priceVal).replace(/[^\d]/g, ''), 10) || 0;
 
       if (!DATA[brand]) DATA[brand] = {};
       if (!DATA[brand][model]) DATA[brand][model] = {};
@@ -142,7 +124,7 @@
   function initCalc() {
     var brands = Object.keys(DATA);
     if(brands.length === 0) {
-      elLoader.innerText = "Ошибка разбора таблицы. Проверьте заголовки.";
+      elLoader.innerText = "Ошибка разбора таблицы. Проверьте данные.";
       return;
     }
 
@@ -160,10 +142,6 @@
     });
 
     updateModels(brands[0]);
-    
-    elCta.addEventListener('click', function() {
-      sendOrder();
-    });
   }
 
   function updateModels(brand) {
