@@ -53,11 +53,8 @@
 
 <script>
 (function () {
-  // ====== НАСТРОЙКИ ======
-  // Ваш личный ID таблицы из ссылки
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  
-  var FORM_ID = ""; // Сюда потом вставим ID формы Tilda
+  var FORM_ID = ""; 
   var MAILTO = "zakaz@example.com"; 
 
   var DATA = {}; 
@@ -70,13 +67,11 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Запрашиваем через легальный Visualization API в формате JSON
   var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
     .then(function(res) { return res.text(); })
     .then(function(text) {
-      // Очищаем ответ Google от технического текста вокружной обертки google.visualization...
       var start = text.indexOf('{');
       var end = text.lastIndexOf('}');
       var jsonString = text.substring(start, end + 1);
@@ -94,24 +89,20 @@
     var rows = json.table.rows;
     if (!rows || rows.length === 0) return;
 
-    // Закрепляем порядок столбцов: 0-Brand, 1-Model, 2-Problem, 3-Price, 4-Description
     var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
 
     for (var i = 0; i < rows.length; i++) {
       var row = rows[i].c;
       if (!row || row.length < 4) continue;
 
-      // Безопасное вытаскивание строк из структуры Google JSON
       var brand = row[idxBrand] && row[idxBrand].v !== null ? String(row[idxBrand].v).trim() : "";
       var model = row[idxModel] && row[idxModel].v !== null ? String(row[idxModel].v).trim() : "";
       var problem = row[idxProblem] && row[idxProblem].v !== null ? String(row[idxProblem].v).trim() : "";
       var priceVal = row[idxPrice] && row[idxPrice].v !== null ? row[idxPrice].v : 0;
       var desc = row[idxDesc] && row[idxDesc].v !== null ? String(row[idxDesc].v).trim() : "";
 
-      // Отсекаем заголовок таблицы
       if (brand.toLowerCase() === 'brand' || !brand || !model || !problem) continue;
 
-      // Избавляемся от пробелов в числах, если они есть
       var price = parseInt(String(priceVal).replace(/[^\d]/g, ''), 10) || 0;
 
       if (!DATA[brand]) DATA[brand] = {};
@@ -141,14 +132,18 @@
       updateProblems(elBrand.value, this.value);
     });
 
-    updateModels(brands[0]);
+    updateModels(brands);
+    
+    elCta.addEventListener('click', function() {
+      sendOrder();
+    });
   }
 
   function updateModels(brand) {
     var models = Object.keys(DATA[brand] || {});
     elModel.innerHTML = models.map(function(m) { return '<option value="'+m+'">'+m+'</option>'; }).join('');
     if(models.length > 0) {
-      updateProblems(brand, models[0]);
+      updateProblems(brand, models);
     }
   }
 
