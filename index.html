@@ -1,4 +1,4 @@
-<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С ВШИТЫМ ДИЗАЙНОМ ПОД ШАБЛОН DRIVERS ================= -->
+<!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С ГАРАНТИРОВАННОЙ ЗАГРУЗКОЙ ИЗ GOOGLE ================= -->
 <div class="rp-wrap" style="max-width: 600px; margin: 40px auto; font-family: Arial, sans-serif; background: #ffffff; padding: 10px 20px; box-sizing: border-box;">
   <div id="rpLoader" style="text-align: center; color: #666666; padding: 40px 0; font-size: 16px; font-weight: 500;">Загрузка актуальных цен...</div>
   
@@ -18,7 +18,7 @@
     <!-- Заголовок списка поломок -->
     <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Что случилось с телефоном</span>
     
-    <!-- Сюда скрипт вставит карточки поломок -->
+    <!-- Сюда вставляются карточки поломок -->
     <div id="rpList"></div>
 
     <!-- Блок Итого -->
@@ -27,10 +27,13 @@
       <span id="rpTotal" style="font-size: 36px; font-weight: 700; color: #000000; font-variant-numeric: tabular-nums;">0 ₽</span>
     </div>
 
-    <!-- Кнопка заявки в фирменном стиле Drivers -->
+    <!-- Кнопка заявки -->
     <button id="rpCta" type="button" style="display: block; width: 100%; padding: 16px; border: none; border-radius: 0px; background: #111424; color: #ffffff; font-size: 16px; font-weight: 700; cursor: pointer; text-align: center; letter-spacing: 0.5px; transition: background 0.2s ease;">Оформить заявку</button>
   </div>
 </div>
+
+<!-- Официальное ядро Google API для мгновенной загрузки без блокировок -->
+<script src="https://gstatic.com"></script>
 
 <script>
 (function () {
@@ -48,41 +51,36 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Защита от блокировок Google: пускаем запрос через стабильный публичный прокси-сервер
-  var targetUrl = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
-  var url = 'https://allorigins.win' + encodeURIComponent(targetUrl);
+  // Инициализируем легальное подключение к Google таблицам через визуализатор
+  if (typeof google !== 'undefined') {
+    google.charts.load('current', { 'packages': ['corechart'] });
+    google.charts.setOnLoadCallback(loadSheetData);
+  } else {
+    elLoader.innerText = "Ошибка подключения к сети Google. Пожалуйста, обновите страницу.";
+  }
 
-  fetch(url)
-    .then(function(res) { return res.text(); })
-    .then(function(text) {
-      var start = text.indexOf('{');
-      var end = text.lastIndexOf('}');
-      var jsonString = text.substring(start, end + 1);
-      var json = JSON.parse(jsonString);
-      
-      parseGoogleJson(json);
-      initCalc();
-    })
-    .catch(function(err) {
-      console.error(err);
-      elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
-    });
+  function loadSheetData() {
+    var query = new google.visualization.Query('https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json');
+    query.send(handleQueryResponse);
+  }
 
-  function parseGoogleJson(json) {
-    var rows = json.table.rows;
-    if (!rows || rows.length === 0) return;
+  function handleQueryResponse(response) {
+    if (response.isError()) {
+      console.error('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+      elLoader.innerText = "Ошибка загрузки таблицы. Проверьте настройки доступа.";
+      return;
+    }
 
-    var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
+    var dataTable = response.getDataTable();
+    var numRows = dataTable.getNumberOfRows();
 
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i].c;
-      if (!row || row.length < 4) continue;
-
-      var brand = row[idxBrand] && row[idxBrand].v !== null ? String(row[idxBrand].v).trim() : "";
-      var model = row[idxModel] && row[idxModel].v !== null ? String(row[idxModel].v).trim() : "";
-      var problem = row[idxProblem] && row[idxProblem].v !== null ? String(row[idxProblem].v).trim() : "";
-      var priceVal = row[idxPrice] && row[idxPrice].v !== null ? row[idxPrice].v : 0;
-      var desc = row[idxDesc] && row[idxDesc].v !== null ? String(row[idxDesc].v).trim() : "";
+    // Столбцы: 0-Brand, 1-Model, 2-Problem, 3-Price, 4-Description
+    for (var i = 0; i < numRows; i++) {
+      var brand = dataTable.getValue(i, 0) ? String(dataTable.getValue(i, 0)).trim() : "";
+      var model = dataTable.getValue(i, 1) ? String(dataTable.getValue(i, 1)).trim() : "";
+      var problem = dataTable.getValue(i, 2) ? String(dataTable.getValue(i, 2)).trim() : "";
+      var priceVal = dataTable.getValue(i, 3) || 0;
+      var desc = dataTable.getValue(i, 4) ? String(dataTable.getValue(i, 4)).trim() : "";
 
       if (brand.toLowerCase() === 'brand' || !brand || !model || !problem) continue;
 
@@ -93,12 +91,14 @@
       
       DATA[brand][model][problem] = { p: price, d: desc };
     }
+
+    initCalc();
   }
 
   function initCalc() {
     var brands = Object.keys(DATA);
     if(brands.length === 0) {
-      elLoader.innerText = "Ошибка разбора таблицы. Проверьте данные.";
+      elLoader.innerText = "Таблица пустая или заполнена неверно.";
       return;
     }
 
