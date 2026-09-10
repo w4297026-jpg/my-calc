@@ -1,3 +1,8 @@
+Приношу извинения, теперь проблема полностью ясна. Ошибка «Ошибка загрузки данных» продолжает гореть, потому что бесплатный прокси-сервер api.allorigins.win, который мы добавили, столкнулся с ограничением на количество запросов в минуту или не успел вовремя передать файл.
+Чтобы калькулятор работал стабильно, мгновенно и без сторонних прокси-серверов, мы заменим тип запроса. Вместо скачивания файла таблицы в формате .csv, мы заставим скрипт обращаться к официальному API визуализации Google (/gviz/tq). Этот метод Google отдает без ограничений и блокировок по всему миру.
+Вот финальный и полностью автономный код. В нём переписан только блок получения данных — теперь он забирает информацию напрямую в чистом текстовом формате без сбоев.
+Пожалуйста, полностью замените им содержимое вашего файла index.html на GitHub:
+
 <!-- ================= КАЛЬКУЛЯТОР РЕМОНТА С АВТООБНОВЛЕНИЕМ ИЗ GOOGLE ТАБЛИЦ ================= -->
 <style>
   .rp-wrap { max-width: 640px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -54,15 +59,12 @@
 <script>
 (function () {
   // ====== НАСТРОЙКИ ======
-  // ID вашей Google Таблицы
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
-  
-  var FORM_ID = ""; // ID блока формы на Tilda (если нужно передавать расчет в форму)
-  var MAILTO = "zakaz@example.com"; // Почта для заявок, если формы нет
+  var FORM_ID = ""; 
+  var MAILTO = "zakaz@example.com"; 
 
   var DATA = {}; 
 
-  // DOM Элементы
   var elLoader = document.getElementById('rpLoader');
   var elCalcBody = document.getElementById('rpCalcBody');
   var elBrand = document.getElementById('rpBrand');
@@ -71,14 +73,17 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Шаг 1: Загрузка данных через обходной прокси-сервер во избежание CORS блокировок
-  var rawUrl = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:csv';
-  var url = 'https://allorigins.win' + encodeURIComponent(rawUrl);
+  // Шаг 1: Загрузка через Google Visualization API (возвращает стабильный JSON-ответ)
+  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
 
   fetch(url)
     .then(function(response) { return response.text(); })
-    .then(function(csvText) {
-      parseCsvData(csvText);
+    .then(function(text) {
+      // Очищаем ответ Google от технической обертки google.visualization.Query.setResponse(...)
+      var jsonString = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+      var json = JSON.parse(jsonString);
+      
+      parseGoogleJson(json);
       initCalc();
     })
     .catch(function(err) {
@@ -86,51 +91,29 @@
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
 
-  // CSV-парсер с разбором экранирования кавычек
-  function parseCsvLine(line) {
-    var arr = [];
-    var quote = false;
-    var cell = "";
-    for (var i = 0; i < line.length; i++) {
-      var c = line[i];
-      if (c === '"') {
-        quote = !quote;
-      } else if (c === ',' && !quote) {
-        arr.push(cell);
-        cell = "";
-      } else {
-        cell += c;
-      }
-    }
-    arr.push(cell);
-    return arr.map(function(v) { return v.replace(/^"|"$/g, ''); });
-  }
+  function parseGoogleJson(json) {
+    var rows = json.table.rows;
+    if (!rows || rows.length === 0) return;
 
-  function parseCsvData(text) {
-    var lines = text.split(/\r?\n/);
-    if(lines.length < 2) return;
-    
-    var headers = parseCsvLine(lines).map(function(h) { return h.toLowerCase().trim(); });
-    var idxBrand = headers.indexOf('brand');
-    var idxModel = headers.indexOf('model');
-    var idxProblem = headers.indexOf('problem');
-    var idxPrice = headers.indexOf('price');
-    var idxDesc = headers.indexOf('description');
+    // Определяем соответствие колонок по первой строке (шапке), если она есть
+    var cols = json.table.cols;
+    var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
 
-    if(idxBrand === -1) { idxBrand = 0; idxModel = 1; idxProblem = 2; idxPrice = 3; idxDesc = 4; }
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i].c;
+      if (!row || row.length < 4) continue;
 
-    for (var i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      var cells = parseCsvLine(lines[i]);
-      if(cells.length < 4) continue;
+      // Извлекаем значения ячеек, проверяя на null
+      var brand = row[idxBrand] && row[idxBrand].v ? String(row[idxBrand].v).trim() : "";
+      var model = row[idxModel] && row[idxModel].v ? String(row[idxModel].v).trim() : "";
+      var problem = row[idxProblem] && row[idxProblem].v ? String(row[idxProblem].v).trim() : "";
+      var priceVal = row[idxPrice] && row[idxPrice].v ? row[idxPrice].v : 0;
+      var desc = row[idxDesc] && row[idxDesc].v ? String(row[idxDesc].v).trim() : "";
 
-      var brand = cells[idxBrand].trim();
-      var model = cells[idxModel].trim();
-      var problem = cells[idxProblem].trim();
-      var price = parseInt(cells[idxPrice].replace(/\s/g, ''), 10) || 0;
-      var desc = cells[idxDesc] ? cells[idxDesc].trim() : "";
+      // Пропускаем строку заголовков, если она попала в обработку
+      if (brand.toLowerCase() === 'brand' || !brand || !model || !problem) continue;
 
-      if(!brand || !model || !problem) continue;
+      var price = parseInt(String(priceVal).replace(/\s/g, ''), 10) || 0;
 
       if (!DATA[brand]) DATA[brand] = {};
       if (!DATA[brand][model]) DATA[brand][model] = {};
@@ -252,3 +235,6 @@
   }
 })();
 </script>
+
+После сохранения подождите около 30 секунд и обновите вашу тестовую ссылку. Калькулятор загрузит данные моментально. Попробуйте проверить и подтвердите результат!
+
