@@ -16,7 +16,7 @@
     </div>
 
     <!-- Заголовок списка поломок -->
-    <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">What happened to the phone (you can choose several)</span>
+    <span style="display: block; font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Что случилось с телефоном (можно выбрать несколько)</span>
     
     <!-- Сюда вставляются карточки поломок -->
     <div id="rpList"></div>
@@ -34,7 +34,6 @@
 
 <script>
 (function () {
-  // Чистый ID вашей таблицы без лишних хвостиков ссылки
   var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o"; 
   var FORM_ID = ""; 
   var MAILTO = "zakaz@example.com"; 
@@ -49,13 +48,12 @@
   var elTotal = document.getElementById('rpTotal');
   var elCta = document.getElementById('rpCta');
 
-  // Очищенный легальный запрос к Google API
-  var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
+  // Указываем явное имя вашей вкладки таблицы (&sheet=Лист1) во избежание пустых ответов API
+  var url = 'https://google.com' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json&sheet=' + encodeURIComponent('Лист1');
 
   fetch(url)
     .then(function(res) { return res.text(); })
     .then(function(text) {
-      // Жесткая очистка ответа от любых оберток Google
       var start = text.indexOf('{');
       var end = text.lastIndexOf('}');
       if (start === -1 || end === -1) throw new Error("Неверный формат ответа Google");
