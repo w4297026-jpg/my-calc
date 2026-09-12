@@ -1,0 +1,74 @@
+/* ===== Шапка с логотипом ===== */
+.im-head { text-align: center; margin-bottom: 20px; }
+.im-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+.im-logo b { color: var(--rp-accent-dark); }
+.im-badge {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
+  padding: 8px 16px; background: var(--rp-accent-light);
+  border: 1.5px solid var(--rp-accent-dark); border-radius: 999px;
+  font-size: 14px; font-weight: 700; color: var(--rp-accent-dark);
+}
+.im-badge .im-star { color: var(--rp-accent-dark); }
+
+/* ===== Филиалы ===== */
+.im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+@media (max-width: 640px) { .im-branches { grid-template-columns: 1fr; } }
+.im-branch {
+  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+  background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.im-branch:hover { border-color: var(--rp-accent-dark); }
+.im-branch.on { border-color: var(--rp-accent-dark); background: var(--rp-accent-light); }
+.im-branch-name { font-weight: 700; font-size: 14px; }
+.im-branch-addr { font-size: 13px; color: var(--rp-text-2); margin-top: 4px; }
+.im-branch-rating { font-size: 13px; color: var(--rp-accent-dark); font-weight: 600; margin-top: 4px; }
+
+/* ===== Карта ===== */
+.im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 8px 0 20px; }
+.im-map iframe { width: 100%; height: 320px; border: 0; display: block; }
+
+/* ===== Отзывы ===== */
+.im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 24px; }
+@media (max-width: 640px) { .im-reviews { grid-template-columns: 1fr; } }
+.im-review {
+  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff;
+}
+.im-review-stars { color: var(--rp-accent-dark); font-size: 14px; letter-spacing: 2px; }
+.im-review-text { font-size: 13px; color: var(--rp-text); margin: 8px 0; line-height: 1.5; }
+.im-review-src { font-size: 12px; color: var(--rp-text-2); }
+.im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
+.im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
+
+/* ===== Запись (календарь) ===== */
+.bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; }
+.bk-date {
+  flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
+  border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.bk-date:hover { border-color: var(--rp-accent-dark); }
+.bk-date.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); }
+.bk-date.on .bk-dow, .bk-date.on .bk-day { color: #78350f; }
+.bk-dow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--rp-text-2); }
+.bk-day { font-size: 16px; font-weight: 800; color: var(--rp-text); }
+.bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 10px 0; }
+.bk-time {
+  padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.bk-time:hover { border-color: var(--rp-accent-dark); }
+.bk-time.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); color: #78350f; }
+.bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media (max-width: 480px) { .bk-fields { grid-template-columns: 1fr; } }
+.bk-input {
+  width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+  font-size: 15px; background: #fff; color: var(--rp-text);
+}
+.bk-input:focus { outline: none; border-color: var(--rp-accent-dark); }
+.bk-summary {
+  display: none; margin-top: 14px; padding: 14px 16px; border-radius: 12px;
+  background: var(--rp-accent-light); border: 1.5px dashed var(--rp-accent-dark);
+  font-size: 14px; color: var(--rp-text); white-space: pre-line;
+}
+.bk-summary.show { display: block; }
