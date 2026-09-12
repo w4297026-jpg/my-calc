@@ -266,6 +266,80 @@
     color: var(--rp-text-2);
     margin-top: 16px;
   }
+  /* ===== Шапка с логотипом ===== */
+.im-head { text-align: center; margin-bottom: 20px; }
+.im-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+.im-logo b { color: var(--rp-accent-dark); }
+.im-badge {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
+  padding: 8px 16px; background: var(--rp-accent-light);
+  border: 1.5px solid var(--rp-accent-dark); border-radius: 999px;
+  font-size: 14px; font-weight: 700; color: var(--rp-accent-dark);
+}
+.im-badge .im-star { color: var(--rp-accent-dark); }
+
+/* ===== Филиалы ===== */
+.im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+@media (max-width: 640px) { .im-branches { grid-template-columns: 1fr; } }
+.im-branch {
+  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+  background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.im-branch:hover { border-color: var(--rp-accent-dark); }
+.im-branch.on { border-color: var(--rp-accent-dark); background: var(--rp-accent-light); }
+.im-branch-name { font-weight: 700; font-size: 14px; }
+.im-branch-addr { font-size: 13px; color: var(--rp-text-2); margin-top: 4px; }
+.im-branch-rating { font-size: 13px; color: var(--rp-accent-dark); font-weight: 600; margin-top: 4px; }
+
+/* ===== Карта ===== */
+.im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 8px 0 20px; }
+.im-map iframe { width: 100%; height: 320px; border: 0; display: block; }
+
+/* ===== Отзывы ===== */
+.im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 24px; }
+@media (max-width: 640px) { .im-reviews { grid-template-columns: 1fr; } }
+.im-review {
+  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff;
+}
+.im-review-stars { color: var(--rp-accent-dark); font-size: 14px; letter-spacing: 2px; }
+.im-review-text { font-size: 13px; color: var(--rp-text); margin: 8px 0; line-height: 1.5; }
+.im-review-src { font-size: 12px; color: var(--rp-text-2); }
+.im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
+.im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
+
+/* ===== Запись (календарь) ===== */
+.bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; }
+.bk-date {
+  flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
+  border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.bk-date:hover { border-color: var(--rp-accent-dark); }
+.bk-date.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); }
+.bk-date.on .bk-dow, .bk-date.on .bk-day { color: #78350f; }
+.bk-dow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--rp-text-2); }
+.bk-day { font-size: 16px; font-weight: 800; color: var(--rp-text); }
+.bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 10px 0; }
+.bk-time {
+  padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
+  border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.bk-time:hover { border-color: var(--rp-accent-dark); }
+.bk-time.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); color: #78350f; }
+.bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+@media (max-width: 480px) { .bk-fields { grid-template-columns: 1fr; } }
+.bk-input {
+  width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+  font-size: 15px; background: #fff; color: var(--rp-text);
+}
+.bk-input:focus { outline: none; border-color: var(--rp-accent-dark); }
+.bk-summary {
+  display: none; margin-top: 14px; padding: 14px 16px; border-radius: 12px;
+  background: var(--rp-accent-light); border: 1.5px dashed var(--rp-accent-dark);
+  font-size: 14px; color: var(--rp-text); white-space: pre-line;
+}
+.bk-summary.show { display: block; }
 </style>
 </head>
 <body>
@@ -275,6 +349,10 @@
 
   <div id="rpCalcBody" style="display: none;">
     <div class="rp-head">
+          <div class="im-head">
+      <div class="im-logo"><b>i</b>Момент</div>
+      <div class="im-badge"><span class="im-star">★</span> 5.0 на Яндекс.Картах · более 230 оценок</div>
+    </div>
       <div class="rp-title">Калькулятор стоимости ремонта</div>
       <div class="rp-subtitle">Выберите модель и отметьте, что случилось с телефоном</div>
     </div>
@@ -323,6 +401,47 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 1 0 24 12 12 12 0 0 0 11.94 0zm5.89 8.16-1.97 9.3c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.12.84.9z"/></svg>
         Написать в Telegram
       </a>
+          <div class="im-section-title">Наши филиалы</div>
+    <div class="im-section-sub">Выберите филиал — он будет подставлен в запись на ремонт</div>
+    <div class="im-branches" id="imBranches"></div>
+
+    <div class="im-map">
+      <!-- ЗАМЕНИТЕ src на код виджета: откройте филиал на Яндекс.Картах → Поделиться → «Код» → скопируйте iframe -->
+      <iframe src="https://yandex.ru/map-widget/v1/?ll=37.68%2C55.75&z=11" loading="lazy"></iframe>
+    </div>
+
+    <div class="im-section-title">Отзывы клиентов</div>
+    <div class="im-section-sub">Отзывы с Яндекс.Карт, где мы набрали 5.0</div>
+    <div class="im-reviews">
+      <div class="im-review">
+        <div class="im-review-stars">★★★★★</div>
+        <div class="im-review-text">«Всей семьёй ремонтируем айфоны только здесь. Адекватные цены, быстро, без навязывания лишних услуг. Разъём почистили бесплатно вместо платного ремонта!»</div>
+        <div class="im-review-src">— клиент с Яндекс.Карт</div>
+      </div>
+      <div class="im-review">
+        <div class="im-review-stars">★★★★★</div>
+        <div class="im-review-text">«Принёс iPhone SE 3, который перестал заряжаться после чужого ремонта. Под микроскопом нашли причину, через несколько часов — рабочий аппарат. Дешевле, чем у мастеров на Савёлке.»</div>
+        <div class="im-review-src">— клиент с Яндекс.Карт</div>
+      </div>
+      <div class="im-review">
+        <div class="im-review-stars">★★★★★</div>
+        <div class="im-review-text">«Не работала камера. Причину нашли быстро, заменили за 30–40 минут, запчасти в наличии. Спасибо мастеру!»</div>
+        <div class="im-review-src">— клиент с Яндекс.Карт</div>
+      </div>
+    </div>
+
+    <div class="im-section-title">Запись на ремонт</div>
+    <div class="im-section-sub">Выберите филиал, дату и время — запись уйдёт нам в Telegram</div>
+    <div class="bk-dates" id="bkDates"></div>
+    <div class="bk-times" id="bkTimes"></div>
+    <div class="bk-fields">
+      <input class="bk-input" id="bkName" type="text" placeholder="Ваше имя">
+      <input class="bk-input" id="bkPhone" type="tel" placeholder="Телефон для связи">
+    </div>
+    <a class="rp-cta rp-cta-call" id="bkSubmit" href="#" style="text-decoration:none;">Записаться на ремонт</a>
+    <div class="bk-summary" id="bkSummary"></div>
+    <div class="rp-foot">Работаем ежедневно с 10:00 до 21:00 · Защитное стекло — 500 ₽</div>
+
     </div>
     <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 7% за каждую услугу, начиная со второй.</div>
   </div>
@@ -614,6 +733,81 @@
     // При нажатии — звонок в сервис
     window.location.href = "tel:+74952042751";
   }
+  // ===== Филиалы =====
+  var BRANCHES = [
+    { name: 'ш. Энтузиастов, 12к2', addr: 'этаж 3 · м. Авиамоторная', rating: '5.0 · 55 оценок' },
+    { name: 'Рязанский проспект, 2к2', addr: 'этаж 2 · м. Нижегородская', rating: '5.0 · 170 оценок' },
+    { name: '7-я Кожуховская, 9', addr: 'этаж 3', rating: '4.5 · 11 оценок' }
+  ];
+  var branchIdx = -1, bkDate = null, bkTime = null;
+
+  var brEl = document.getElementById('imBranches');
+  brEl.innerHTML = BRANCHES.map(function(b, i) {
+    return '<div class="im-branch" data-i="' + i + '">' +
+      '<div class="im-branch-name">' + b.name + '</div>' +
+      '<div class="im-branch-addr">' + b.addr + '</div>' +
+      '<div class="im-branch-rating">★ ' + b.rating + '</div></div>';
+  }).join('');
+  brEl.querySelectorAll('.im-branch').forEach(function(el) {
+    el.addEventListener('click', function() {
+      brEl.querySelectorAll('.im-branch').forEach(function(x) { x.classList.remove('on'); });
+      el.classList.add('on');
+      branchIdx = +el.getAttribute('data-i');
+      updateBkSummary();
+    });
+  });
+
+  // ===== Даты: ближайшие 14 дней =====
+  var DOW = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+  var dEl = document.getElementById('bkDates');
+  for (var i = 0; i < 14; i++) {
+    var d = new Date(); d.setDate(d.getDate() + i);
+    var chip = document.createElement('div');
+    chip.className = 'bk-date';
+    chip.innerHTML = '<div class="bk-dow">' + (i === 0 ? 'сегодня' : DOW[d.getDay()]) + '</div>' +
+                     '<div class="bk-day">' + String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '</div>';
+    chip.addEventListener('click', function() {
+      dEl.querySelectorAll('.bk-date').forEach(function(x) { x.classList.remove('on'); });
+      this.classList.add('on');
+      bkDate = this.querySelector('.bk-day').innerText + ' (' + this.querySelector('.bk-dow').innerText + ')';
+      updateBkSummary();
+    });
+    dEl.appendChild(chip);
+  }
+
+  // ===== Время: 10:00–20:00 =====
+  var tEl = document.getElementById('bkTimes');
+  for (var h = 10; h <= 20; h++) {
+    var t = document.createElement('div');
+    t.className = 'bk-time';
+    t.innerText = h + ':00';
+    t.addEventListener('click', function() {
+      tEl.querySelectorAll('.bk-time').forEach(function(x) { x.classList.remove('on'); });
+      this.classList.add('on');
+      bkTime = this.innerText;
+      updateBkSummary();
+    });
+    tEl.appendChild(t);
+  }
+
+  // ===== Отправка записи в Telegram =====
+  function updateBkSummary() {
+    var s = document.getElementById('bkSummary');
+    if (branchIdx === -1 || !bkDate || !bkTime) { s.classList.remove('show'); return; }
+    var text = 'Здравствуйте! Хочу записаться на ремонт.\n' +
+               'Филиал: ' + BRANCHES[branchIdx].name + '\n' +
+               'Дата: ' + bkDate + ' в ' + bkTime;
+    var name = document.getElementById('bkName').value.trim();
+    var phone = document.getElementById('bkPhone').value.trim();
+    if (name) text += '\nИмя: ' + name;
+    if (phone) text += '\nТелефон: ' + phone;
+    s.innerText = '✅ Ваша запись:\n' + BRANCHES[branchIdx].name + '\n' + bkDate + ' в ' + bkTime;
+    s.classList.add('show');
+    document.getElementById('bkSubmit').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
+  }
+  document.getElementById('bkName').addEventListener('input', updateBkSummary);
+  document.getElementById('bkPhone').addEventListener('input', updateBkSummary);
+
 })();
 </script>
 
