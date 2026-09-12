@@ -21,6 +21,8 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html, body { overflow-x: hidden; }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--rp-bg);
@@ -79,7 +81,6 @@
     gap: 16px;
     margin-bottom: 24px;
   }
-  @media (max-width: 540px) { .rp-grid { grid-template-columns: 1fr; } }
 
   .rp-select-wrap { position: relative; }
   .rp-select-wrap::after {
@@ -130,6 +131,7 @@
     background: #fff;
     transition: border-color .15s, background .15s, transform .1s;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   .rp-item:hover { border-color: #c7cbd6; }
   .rp-item:active { transform: scale(0.995); }
@@ -155,9 +157,6 @@
   .rp-item input[type="checkbox"]:checked {
     background: var(--rp-accent);
     border-color: var(--rp-accent-dark);
-  }
-  .rp-item input[type="checkbox"]:checked::after {
-    border-color: #7c2d12;
   }
   .rp-item input[type="checkbox"]:checked::after {
     content: "";
@@ -188,6 +187,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 12px;
     margin-top: 24px;
     padding: 18px 20px;
     background: linear-gradient(135deg, #111827, #1f2937);
@@ -200,10 +200,10 @@
     font-weight: 800;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
 
   .rp-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
-  @media (max-width: 480px) { .rp-cta-row { grid-template-columns: 1fr; } }
 
   .rp-cta {
     display: flex;
@@ -219,6 +219,7 @@
     cursor: pointer;
     text-decoration: none;
     transition: transform .12s, box-shadow .15s, filter .15s;
+    -webkit-tap-highlight-color: transparent;
   }
   .rp-cta svg { width: 20px; height: 20px; flex-shrink: 0; }
 
@@ -257,7 +258,7 @@
 
   /* строка скидки в панели итога */
   .rp-total-rows { display: flex; flex-direction: column; gap: 4px; }
-  .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; }
+  .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; gap: 8px; }
   .rp-total-row .rp-discount-val { color: var(--rp-accent); font-weight: 700; font-variant-numeric: tabular-nums; }
 
   .rp-foot {
@@ -266,80 +267,104 @@
     color: var(--rp-text-2);
     margin-top: 16px;
   }
+
   /* ===== Шапка с логотипом ===== */
-.im-head { text-align: center; margin-bottom: 20px; }
-.im-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
-.im-logo b { color: var(--rp-accent-dark); }
-.im-badge {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
-  padding: 8px 16px; background: var(--rp-accent-light);
-  border: 1.5px solid var(--rp-accent-dark); border-radius: 999px;
-  font-size: 14px; font-weight: 700; color: var(--rp-accent-dark);
-}
-.im-badge .im-star { color: var(--rp-accent-dark); }
+  .im-head { text-align: center; margin-bottom: 20px; }
+  .im-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+  .im-logo b { color: var(--rp-accent-dark); }
+  .im-badge {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
+    padding: 8px 16px; background: var(--rp-accent-light);
+    border: 1.5px solid var(--rp-accent-dark); border-radius: 999px;
+    font-size: 14px; font-weight: 700; color: var(--rp-accent-dark);
+  }
+  .im-badge .im-star { color: var(--rp-accent-dark); }
 
-/* ===== Филиалы ===== */
-.im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
-@media (max-width: 640px) { .im-branches { grid-template-columns: 1fr; } }
-.im-branch {
-  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px;
-  background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
-}
-.im-branch:hover { border-color: var(--rp-accent-dark); }
-.im-branch.on { border-color: var(--rp-accent-dark); background: var(--rp-accent-light); }
-.im-branch-name { font-weight: 700; font-size: 14px; }
-.im-branch-addr { font-size: 13px; color: var(--rp-text-2); margin-top: 4px; }
-.im-branch-rating { font-size: 13px; color: var(--rp-accent-dark); font-weight: 600; margin-top: 4px; }
+  /* ===== Филиалы ===== */
+  .im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0 16px; }
+  .im-branch {
+    padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+    background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .im-branch:hover { border-color: var(--rp-accent-dark); }
+  .im-branch.on { border-color: var(--rp-accent-dark); background: var(--rp-accent-light); }
+  .im-branch-name { font-weight: 700; font-size: 14px; }
+  .im-branch-addr { font-size: 13px; color: var(--rp-text-2); margin-top: 4px; }
+  .im-branch-rating { font-size: 13px; color: var(--rp-accent-dark); font-weight: 600; margin-top: 4px; }
 
-/* ===== Карта ===== */
-.im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 8px 0 20px; }
-.im-map iframe { width: 100%; height: 320px; border: 0; display: block; }
+  /* ===== Карта ===== */
+  .im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 8px 0 20px; }
+  .im-map iframe { width: 100%; height: 320px; border: 0; display: block; }
+  .im-map-hint { font-size: 12px; color: var(--rp-text-2); margin: -12px 0 20px; }
 
-/* ===== Отзывы ===== */
-.im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 24px; }
-@media (max-width: 640px) { .im-reviews { grid-template-columns: 1fr; } }
-.im-review {
-  padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff;
-}
-.im-review-stars { color: var(--rp-accent-dark); font-size: 14px; letter-spacing: 2px; }
-.im-review-text { font-size: 13px; color: var(--rp-text); margin: 8px 0; line-height: 1.5; }
-.im-review-src { font-size: 12px; color: var(--rp-text-2); }
-.im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
-.im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
+  /* ===== Отзывы ===== */
+  .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 24px; }
+  .im-review {
+    padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff;
+  }
+  .im-review-stars { color: var(--rp-accent-dark); font-size: 14px; letter-spacing: 2px; }
+  .im-review-text { font-size: 13px; color: var(--rp-text); margin: 8px 0; line-height: 1.5; }
+  .im-review-src { font-size: 12px; color: var(--rp-text-2); }
+  .im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
+  .im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
 
-/* ===== Запись (календарь) ===== */
-.bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; }
-.bk-date {
-  flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
-  border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.bk-date:hover { border-color: var(--rp-accent-dark); }
-.bk-date.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); }
-.bk-date.on .bk-dow, .bk-date.on .bk-day { color: #78350f; }
-.bk-dow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--rp-text-2); }
-.bk-day { font-size: 16px; font-weight: 800; color: var(--rp-text); }
-.bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 10px 0; }
-.bk-time {
-  padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
-  border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.bk-time:hover { border-color: var(--rp-accent-dark); }
-.bk-time.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); color: #78350f; }
-.bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
-@media (max-width: 480px) { .bk-fields { grid-template-columns: 1fr; } }
-.bk-input {
-  width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
-  font-size: 15px; background: #fff; color: var(--rp-text);
-}
-.bk-input:focus { outline: none; border-color: var(--rp-accent-dark); }
-.bk-summary {
-  display: none; margin-top: 14px; padding: 14px 16px; border-radius: 12px;
-  background: var(--rp-accent-light); border: 1.5px dashed var(--rp-accent-dark);
-  font-size: 14px; color: var(--rp-text); white-space: pre-line;
-}
-.bk-summary.show { display: block; }
+  /* ===== Запись (календарь) ===== */
+  .bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  .bk-date {
+    flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
+    border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
+    transition: border-color .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bk-date:hover { border-color: var(--rp-accent-dark); }
+  .bk-date.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); }
+  .bk-date.on .bk-dow, .bk-date.on .bk-day { color: #78350f; }
+  .bk-dow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--rp-text-2); }
+  .bk-day { font-size: 16px; font-weight: 800; color: var(--rp-text); }
+  .bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 10px 0; }
+  .bk-time {
+    padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
+    border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
+    transition: border-color .15s, background .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bk-time:hover { border-color: var(--rp-accent-dark); }
+  .bk-time.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); color: #78350f; }
+  .bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .bk-input {
+    width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
+    font-size: 15px; background: #fff; color: var(--rp-text);
+  }
+  .bk-input:focus { outline: none; border-color: var(--rp-accent-dark); }
+  .bk-summary {
+    display: none; margin-top: 14px; padding: 14px 16px; border-radius: 12px;
+    background: var(--rp-accent-light); border: 1.5px dashed var(--rp-accent-dark);
+    font-size: 14px; color: var(--rp-text); white-space: pre-line;
+  }
+  .bk-summary.show { display: block; }
+
+  /* ===== Мобильная версия ===== */
+  @media (max-width: 640px) {
+    body { padding: 16px 12px; }
+    #rpCalcBody { padding: 20px 16px; border-radius: 14px; }
+    .rp-title { font-size: 20px; }
+    .rp-subtitle { font-size: 13px; }
+    .im-logo { font-size: 26px; }
+    .im-badge { font-size: 12px; padding: 6px 12px; }
+    .rp-grid { grid-template-columns: 1fr; gap: 12px; }
+    .rp-total { flex-direction: column; align-items: flex-start; padding: 16px; }
+    .rp-total-val { font-size: 26px; }
+    .rp-cta-row { grid-template-columns: 1fr; }
+    .im-branches { grid-template-columns: 1fr; }
+    .im-reviews { grid-template-columns: 1fr; }
+    .im-map iframe { height: 240px; }
+    .bk-fields { grid-template-columns: 1fr; }
+    .rp-item { padding: 12px 14px; }
+    .rp-name { font-size: 14px; }
+    .rp-desc { font-size: 12px; }
+    .rp-price { font-size: 14px; }
+  }
 </style>
 </head>
 <body>
@@ -349,10 +374,10 @@
 
   <div id="rpCalcBody" style="display: none;">
     <div class="rp-head">
-          <div class="im-head">
-      <div class="im-logo"><b>i</b>Момент</div>
-      <div class="im-badge"><span class="im-star">★</span> 5.0 на Яндекс.Картах · более 230 оценок</div>
-    </div>
+      <div class="im-head">
+        <div class="im-logo"><b>i</b>Момент</div>
+        <div class="im-badge"><span class="im-star">★</span> 5.0 на Яндекс.Картах · более 230 оценок</div>
+      </div>
       <div class="rp-title">Калькулятор стоимости ремонта</div>
       <div class="rp-subtitle">Выберите модель и отметьте, что случилось с телефоном</div>
     </div>
@@ -401,14 +426,17 @@
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 1 0 24 12 12 12 0 0 0 11.94 0zm5.89 8.16-1.97 9.3c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.12.84.9z"/></svg>
         Написать в Telegram
       </a>
-          <div class="im-section-title">Наши филиалы</div>
-    <div class="im-section-sub">Выберите филиал — он будет подставлен в запись на ремонт</div>
+    </div>
+
+    <!-- Филиалы, отзывы и запись вынесены из сетки кнопок — на всю ширину карточки -->
+    <div class="im-section-title">Наши филиалы</div>
+    <div class="im-section-sub">Выберите филиал — на карте появится метка, и он будет подставлен в запись на ремонт</div>
     <div class="im-branches" id="imBranches"></div>
 
     <div class="im-map">
-      <!-- ЗАМЕНИТЕ src на код виджета: откройте филиал на Яндекс.Картах → Поделиться → «Код» → скопируйте iframe -->
-      <iframe src="https://yandex.ru/map-widget/v1/?ll=37.68%2C55.75&z=11" loading="lazy"></iframe>
+      <iframe id="imMapFrame" src="https://yandex.ru/map-widget/v1/?ll=37.705%2C55.733&z=11" loading="lazy" allowfullscreen></iframe>
     </div>
+    <div class="im-map-hint">Нажмите на филиал выше — карта покажет его местоположение</div>
 
     <div class="im-section-title">Отзывы клиентов</div>
     <div class="im-section-sub">Отзывы с Яндекс.Карт, где мы набрали 5.0</div>
@@ -435,14 +463,13 @@
     <div class="bk-dates" id="bkDates"></div>
     <div class="bk-times" id="bkTimes"></div>
     <div class="bk-fields">
-      <input class="bk-input" id="bkName" type="text" placeholder="Ваше имя">
-      <input class="bk-input" id="bkPhone" type="tel" placeholder="Телефон для связи">
+      <input class="bk-input" id="bkName" type="text" placeholder="Ваше имя" autocomplete="name">
+      <input class="bk-input" id="bkPhone" type="tel" placeholder="Телефон для связи" autocomplete="tel">
     </div>
     <a class="rp-cta rp-cta-call" id="bkSubmit" href="#" style="text-decoration:none;">Записаться на ремонт</a>
     <div class="bk-summary" id="bkSummary"></div>
     <div class="rp-foot">Работаем ежедневно с 10:00 до 21:00 · Защитное стекло — 500 ₽</div>
 
-    </div>
     <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 7% за каждую услугу, начиная со второй.</div>
   </div>
 </div>
@@ -462,7 +489,6 @@
   var elModel = document.getElementById('rpModel');
   var elList = document.getElementById('rpList');
   var elTotal = document.getElementById('rpTotal');
-  var elCta = document.getElementById('rpCta');
 
   // Запрос к Google Sheets API
   var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
@@ -536,7 +562,6 @@
   }
 
   // ====== Определение устройства посетителя ======
-  // Samsung: коды моделей SM-XXXX
   var SAMSUNG_CODES = {
     'SM-S938': 'Galaxy S25 Ultra', 'SM-S935': 'Galaxy S25+', 'SM-S931': 'Galaxy S25',
     'SM-S928': 'Galaxy S24 Ultra', 'SM-S926': 'Galaxy S24+',  'SM-S921': 'Galaxy S24',
@@ -556,23 +581,19 @@
   function detectDevice() {
     var ua = navigator.userAgent;
 
-    // iPhone: Apple скрывает модель — известен только факт «это iPhone»
     if (/iPhone/.test(ua)) return { brand: 'iPhone', model: null };
 
-    // Android: модель обычно идёт после версии Android
     var m = ua.match(/Android[\d.]*;\s*([^;)]+)/i);
     var token = m ? m[1].trim() : '';
     if (!token) return null;
-    token = token.replace(/^\w+\s+\w+\s+/, ''); // отсекаем служебные префиксы
+    token = token.replace(/^\w+\s+\w+\s+/, '');
 
-    // Samsung по коду SM-XXXX / GT-XXXX
     var sm = token.match(/SM-[A-Z]?\d{3,4}|GT-I?\d{4}/i);
     if (sm) {
       var code = sm[0].toUpperCase().slice(0, 7);
       return { brand: 'Samsung', model: SAMSUNG_CODES[code] || null };
     }
 
-    // Поиск названия модели прямо в строке
     var low = token.toLowerCase();
     for (var brand in DATA) {
       for (var model in DATA[brand]) {
@@ -582,7 +603,6 @@
       }
     }
 
-    // Определение бренда по характерным маркерам
     if (/huawei|harmonyos/i.test(token)) return { brand: 'Huawei', model: null };
     if (/honor/i.test(token)) return { brand: 'Honor', model: null };
     if (/redmi|poco|xiaomi/i.test(token)) return { brand: 'Xiaomi', model: null };
@@ -661,8 +681,6 @@
     calcTotal();
   }
 
-  // Скидка: 7% за каждую выбранную услугу, но не за первую.
-  // 2 услуги = 7%, 3 = 14%, 5 = 28%. Максимум 90%.
   var DISCOUNT_PER_ITEM = 7;
   var DISCOUNT_MAX = 90;
 
@@ -711,35 +729,32 @@
     document.getElementById('rpTg').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
   }
 
-  function sendOrder() {
-    var brand = elBrand.value;
-    var model = elModel.value;
-    var selected = [];
-    var total = elTotal.innerText;
-
-    elList.querySelectorAll('.rp-item input:checked').forEach(function(chk) {
-      selected.push(chk.closest('.rp-item').getAttribute('data-name'));
-    });
-
-    if(selected.length === 0) {
-      alert('Пожалуйста, выберите хотя бы одну поломку.');
-      return;
-    }
-
-    var message = "Заявка на ремонт: " + brand + " " + model + "\n" +
-                  "Что починить: " + selected.join(', ') + "\n" +
-                  "Стоимость: " + total;
-
-    // При нажатии — звонок в сервис
-    window.location.href = "tel:+74952042751";
-  }
   // ===== Филиалы =====
+  // lon — долгота, lat — широта (координаты с Яндекс.Карт)
   var BRANCHES = [
-    { name: 'ш. Энтузиастов, 12к2', addr: 'этаж 3 · м. Авиамоторная', rating: '5.0 · 55 оценок' },
-    { name: 'Рязанский проспект, 2к2', addr: 'этаж 2 · м. Нижегородская', rating: '5.0 · 170 оценок' },
-    { name: '7-я Кожуховская, 9', addr: 'этаж 3', rating: '4.5 · 11 оценок' }
+    { name: 'ш. Энтузиастов, 12к2', addr: 'этаж 3 · м. Авиамоторная', rating: '5.0 · 55 оценок',  lon: 37.707107, lat: 55.747368 },
+    { name: 'Рязанский проспект, 2к2', addr: 'этаж 2 · м. Нижегородская', rating: '5.0 · 170 оценок', lon: 37.730437, lat: 55.729873 },
+    { name: '7-я Кожуховская, 9', addr: 'этаж 3', rating: '4.5 · 11 оценок', lon: 37.675109, lat: 55.710692 }
   ];
   var branchIdx = -1, bkDate = null, bkTime = null;
+
+  var mapFrame = document.getElementById('imMapFrame');
+
+  // Строим URL виджета Яндекс.Карт: центр, зум и метки (pt)
+  function mapUrl(centerLon, centerLat, zoom, points) {
+    var pts = points.map(function(p) { return p.lon + ',' + p.lat + ',pm2rdl'; }).join('~');
+    return 'https://yandex.ru/map-widget/v1/?ll=' + centerLon + '%2C' + centerLat +
+           '&z=' + zoom + '&pt=' + pts;
+  }
+
+  // Изначально — обзорная карта со всеми тремя филиалами
+  mapFrame.src = mapUrl(37.705, 55.733, 11, BRANCHES);
+
+  function showBranchOnMap(i) {
+    var b = BRANCHES[i];
+    // Карта приближается к выбранному филиалу, остальные остаются метками
+    mapFrame.src = mapUrl(b.lon, b.lat, 16, BRANCHES);
+  }
 
   var brEl = document.getElementById('imBranches');
   brEl.innerHTML = BRANCHES.map(function(b, i) {
@@ -753,6 +768,7 @@
       brEl.querySelectorAll('.im-branch').forEach(function(x) { x.classList.remove('on'); });
       el.classList.add('on');
       branchIdx = +el.getAttribute('data-i');
+      showBranchOnMap(branchIdx);
       updateBkSummary();
     });
   });
