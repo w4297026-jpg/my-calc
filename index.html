@@ -425,7 +425,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         Позвонить
       </a>
-      <a class="rp-cta rp-cta-tg" id="rpTg" href="https://t.me/imoment_master" target="_blank" rel="noopener">
+      <a class="rp-cta rp-cta-tg" id="rpTg" href="https://t.me/imoment2" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 1 0 24 12 12 12 0 0 0 11.94 0zm5.89 8.16-1.97 9.3c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.12.84.9z"/></svg>
         Написать в Telegram
       </a>
@@ -729,7 +729,7 @@
              (pct > 0 ? 'Скидка: ' + pct + '% (−' + discount.toLocaleString('ru-RU') + ' ₽)\n' : '') +
              'Итого по калькулятору: ' + total.toLocaleString('ru-RU') + ' ₽';
     }
-    document.getElementById('rpTg').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
+    document.getElementById('rpTg').href = 'https://t.me/imoment2?text=' + encodeURIComponent(text);
   }
 
   // ===== Филиалы =====
@@ -843,7 +843,7 @@
     s.innerText = '✅ Ваша запись:\n' + BRANCHES[branchIdx].name + '\n' + bkDate + ' в ' + bkTime +
                   (summaryTotal ? '\n' + summaryTotal : '');
     s.classList.add('show');
-    document.getElementById('bkSubmit').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
+    document.getElementById('bkSubmit').href = 'https://t.me/imoment2?text=' + encodeURIComponent(text);
   }
   document.getElementById('bkName').addEventListener('input', updateBkSummary);
   document.getElementById('bkPhone').addEventListener('input', updateBkSummary);
