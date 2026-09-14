@@ -357,6 +357,7 @@
     .topnav a { padding: 8px 12px; font-size: 13px; }
   }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -493,7 +494,7 @@
   // Цены, занятые слоты и отзывы приходят через прокси на Google Apps Script —
   // ID таблицы на клиенте не светится
   var PRICES_URL = "https://script.google.com/macros/s/AKfycbyP-Spnje4BrlCk5rU8ghzev2i75cbXVIEKxXg5rqFgSjFFU5u8fAAf7e5ITo-W8CxmAg/exec";
-  var PRICES_TOKEN = "sdvlskjwe892357755vWEGivlkg$54gwrBET3jt9v";  // тот же токен, что в Code.gs
+  var PRICES_TOKEN = "imoment-prices-2026";  // тот же токен, что в Code.gs
 
   var REVIEWS_LINK = 'https://yandex.ru/maps/org/aymoment/123656609402/reviews/';
 
@@ -508,7 +509,53 @@
   var elList = document.getElementById('rpList');
   var elTotal = document.getElementById('rpTotal');
 
-  // Запрос данных через прокси (Apps Script)
+  // ---- Кэш в браузере: показываем цены мгновенно, свежие подтягиваем фоном ----
+  var CACHE_KEY = 'imoment_data_v1';
+  var inited = false;
+
+  function loadCache() {
+    try {
+      var raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      var c = JSON.parse(raw);
+      if (!c.t || Date.now() - c.t > 24 * 3600 * 1000) return null;
+      return c;
+    } catch (e) { return null; }
+  }
+
+  function saveCache() {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        t: Date.now(), prices: DATA, busy: busyByDate, reviews: reviews
+      }));
+    } catch (e) {}
+  }
+
+  function applyData(json) {
+    DATA = json.prices || {};
+    busyByDate = json.busy || {};
+    reviews = json.reviews || [];
+  }
+
+  // Перерисовка интерфейса на свежих данных (без повторного навешивания обработчиков)
+  function refreshUI() {
+    renderReviews();
+    if (inited) {
+      var brand = elBrand.value || Object.keys(DATA)[0];
+      if (brand) updateModels(brand);
+      markBusy();
+    }
+  }
+
+  // 1) Мгновенно показываем сохранённые данные — страница не ждёт сеть
+  var cached = loadCache();
+  if (cached) {
+    applyData(cached);
+    initCalc();
+    inited = true;
+  }
+
+  // 2) Фоном подтягиваем свежие цены, слоты и отзывы
   fetch(PRICES_URL + '?token=' + encodeURIComponent(PRICES_TOKEN) + '&r=' + Date.now())
     .then(function(res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -516,16 +563,36 @@
     })
     .then(function(json) {
       if (!json || json.error) throw new Error((json && json.error) || 'bad data');
-      DATA = json.prices || {};
-      busyByDate = json.busy || {};
-      reviews = json.reviews || [];
-      renderReviews();
-      initCalc();
+      applyData(json);
+      if (!inited) { initCalc(); inited = true; }
+      else refreshUI();
+      saveCache();
     })
     .catch(function(err) {
       console.error(err);
-      elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
+      // Кэш показан — просто молча остаёмся на нём
+      if (!inited) elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
+
+  // Подтягиваем свежие занятые слоты — если кто-то записался, пока страница открыта
+  function refreshBusy() {
+    fetch(PRICES_URL + '?token=' + encodeURIComponent(PRICES_TOKEN) + '&r=' + Date.now())
+      .then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (!json || json.error) return;
+        busyByDate = json.busy || {};
+        if (Object.keys(DATA).length === 0 && json.prices) {
+          applyData(json);
+          if (!inited) { initCalc(); inited = true; }
+          saveCache();
+        }
+        markBusy();
+      })
+      .catch(function() {});
+  }
+
+  // Раз в минуту (и только когда вкладка видна) обновляем занятые часы
+  setInterval(function() { if (!document.hidden && inited) refreshBusy(); }, 60000);
 
   function initCalc() {
     var brands = Object.keys(DATA);
@@ -785,6 +852,7 @@
       bkDateKey = this.querySelector('.bk-day').innerText;
       bkDate = bkDateKey + ' (' + this.querySelector('.bk-dow').innerText + ')';
       markBusy();
+      refreshBusy();  // свежие занятые слоты на эту дату
       updateBkSummary();
     });
     dEl.appendChild(chip);
