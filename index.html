@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор ремонта</title>
+<title>iМомент — скорый ремонт телефонов в Москве</title>
+<meta name="description" content="Скорый ремонт телефонов в Москве от 30 минут, тут же и при вас. Онлайн-калькулятор стоимости, 3 филиала, ★ 5.0 на Яндекс.Картах.">
+<meta property="og:title" content="iМомент — скорый ремонт телефонов">
+<meta property="og:description" content="Ремонт от 30 минут, тут же и при вас. ★ 5.0 на Яндекс.Картах · более 230 оценок.">
+<meta property="og:image" content="https://imoment-calc.icol.workers.dev/hero.jpg">
+<meta property="og:type" content="website">
 <style>
   :root {
     --rp-accent: #fbbf24;
@@ -20,7 +25,9 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { scroll-behavior: smooth; }
   html, body { overflow-x: hidden; }
+  [id] { scroll-margin-top: 84px; }
 
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -33,22 +40,66 @@
 
   .rp-wrap { max-width: 680px; margin: 0 auto; }
 
+  /* ---------- Меню ---------- */
+  .topnav {
+    position: sticky; top: 8px; z-index: 100;
+    display: flex; gap: 4px; align-items: center;
+    padding: 6px; margin-bottom: 16px;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid var(--rp-border); border-radius: 999px;
+    box-shadow: 0 6px 20px -8px rgba(17,24,39,.15);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .topnav::-webkit-scrollbar { display: none; }
+  .topnav a {
+    flex-shrink: 0; padding: 8px 14px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600; color: var(--rp-text);
+    text-decoration: none; transition: background .15s, color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .topnav a:hover { background: var(--rp-accent-light); color: var(--rp-accent-dark); }
+  .topnav a.topnav-tel {
+    margin-left: auto; background: var(--rp-accent); color: #78350f;
+    font-weight: 700;
+  }
+  .topnav a.topnav-tel:hover { filter: brightness(1.07); color: #78350f; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative; border-radius: var(--rp-radius); overflow: hidden;
+    min-height: 480px; margin-bottom: 20px;
+    background:
+      linear-gradient(to top, rgba(8,8,10,.92) 0%, rgba(8,8,10,.45) 45%, rgba(8,8,10,.15) 100%),
+      url('hero.jpg') center 22% / cover no-repeat, #0a0a0c;
+    display: flex; align-items: flex-end;
+    box-shadow: var(--rp-shadow);
+  }
+  .hero-inner { padding: 28px 24px; color: #fff; width: 100%; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .hero-badges span {
+    padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
+    background: rgba(251,191,36,.18); border: 1.5px solid rgba(251,191,36,.65); color: #fcd34d;
+    backdrop-filter: blur(4px);
+  }
+  .hero-title { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; text-transform: uppercase; }
+  .hero-sub { margin-top: 10px; font-size: 15px; color: #e5e7eb; max-width: 460px; }
+  .hero-cta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .hero-cta .rp-cta { width: auto; padding: 14px 22px; }
+  .rp-cta-ghost {
+    background: rgba(255,255,255,.08); color: #fff; border: 2px solid rgba(255,255,255,.5);
+  }
+  .rp-cta-ghost:hover { background: rgba(255,255,255,.16); transform: translateY(-1px); }
+
   /* ---------- Загрузка ---------- */
   .rp-loading {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--rp-text-2);
-    font-size: 15px;
+    text-align: center; padding: 60px 20px;
+    color: var(--rp-text-2); font-size: 15px;
   }
   .rp-loading::before {
-    content: "";
-    display: block;
-    width: 36px; height: 36px;
-    margin: 0 auto 16px;
-    border: 3px solid var(--rp-border);
-    border-top-color: var(--rp-accent-dark);
-    border-radius: 50%;
-    animation: rp-spin 0.8s linear infinite;
+    content: ""; display: block; width: 36px; height: 36px; margin: 0 auto 16px;
+    border: 3px solid var(--rp-border); border-top-color: var(--rp-accent-dark);
+    border-radius: 50%; animation: rp-spin 0.8s linear infinite;
   }
   @keyframes rp-spin { to { transform: rotate(360deg); } }
 
@@ -66,52 +117,28 @@
 
   /* ---------- Селекты ---------- */
   .rp-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--rp-text-2);
-    margin-bottom: 8px;
+    display: block; font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--rp-text-2); margin-bottom: 8px;
   }
-  .rp-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
-  }
+  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
 
   .rp-select-wrap { position: relative; }
   .rp-select-wrap::after {
-    content: "";
-    position: absolute;
-    right: 16px; top: 50%;
+    content: ""; position: absolute; right: 16px; top: 50%;
     width: 8px; height: 8px;
-    border-right: 2px solid var(--rp-text-2);
-    border-bottom: 2px solid var(--rp-text-2);
-    transform: translateY(-70%) rotate(45deg);
-    pointer-events: none;
+    border-right: 2px solid var(--rp-text-2); border-bottom: 2px solid var(--rp-text-2);
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
   }
   .rp-select {
-    width: 100%;
-    padding: 14px 40px 14px 16px;
-    border: 1.5px solid var(--rp-border);
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--rp-text);
-    background: #fff;
-    appearance: none;
-    -webkit-appearance: none;
-    cursor: pointer;
+    width: 100%; padding: 14px 40px 14px 16px;
+    border: 1.5px solid var(--rp-border); border-radius: 12px;
+    font-size: 15px; font-weight: 500; color: var(--rp-text);
+    background: #fff; appearance: none; -webkit-appearance: none; cursor: pointer;
     transition: border-color .15s, box-shadow .15s;
   }
   .rp-select:hover { border-color: #c7cbd6; }
-  .rp-select:focus {
-    outline: none;
-    border-color: var(--rp-accent);
-    box-shadow: 0 0 0 4px var(--rp-accent-light);
-  }
+  .rp-select:focus { outline: none; border-color: var(--rp-accent); box-shadow: 0 0 0 4px var(--rp-accent-light); }
 
   /* ---------- Список поломок ---------- */
   .rp-list-title { margin-bottom: 4px; }
@@ -120,51 +147,28 @@
   #rpList { display: flex; flex-direction: column; gap: 10px; }
 
   .rp-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 16px;
-    border: 1.5px solid var(--rp-border);
-    border-radius: 14px;
-    cursor: pointer;
-    background: #fff;
-    transition: border-color .15s, background .15s, transform .1s;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    border: 1.5px solid var(--rp-border); border-radius: 14px; cursor: pointer;
+    background: #fff; transition: border-color .15s, background .15s, transform .1s;
+    user-select: none; -webkit-tap-highlight-color: transparent;
   }
   .rp-item:hover { border-color: #c7cbd6; }
   .rp-item:active { transform: scale(0.995); }
-  .rp-item.on {
-    border-color: var(--rp-accent-dark);
-    background: var(--rp-accent-light);
-  }
+  .rp-item.on { border-color: var(--rp-accent-dark); background: var(--rp-accent-light); }
 
   .rp-item input[type="checkbox"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 22px; height: 22px;
-    flex-shrink: 0;
-    border: 2px solid #c7cbd6;
-    border-radius: 7px;
-    background: #fff;
-    cursor: pointer;
-    position: relative;
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; flex-shrink: 0;
+    border: 2px solid #c7cbd6; border-radius: 7px; background: #fff;
+    cursor: pointer; position: relative; margin: 0;
     transition: background .15s, border-color .15s;
-    margin: 0;
   }
   .rp-item input[type="checkbox"]:hover { border-color: var(--rp-accent-dark); }
-  .rp-item input[type="checkbox"]:checked {
-    background: var(--rp-accent);
-    border-color: var(--rp-accent-dark);
-  }
+  .rp-item input[type="checkbox"]:checked { background: var(--rp-accent); border-color: var(--rp-accent-dark); }
   .rp-item input[type="checkbox"]:checked::after {
-    content: "";
-    position: absolute;
-    left: 6px; top: 2px;
-    width: 5px; height: 10px;
-    border: solid #fff;
-    border-width: 0 2.5px 2.5px 0;
-    transform: rotate(45deg);
+    content: ""; position: absolute; left: 6px; top: 2px;
+    width: 5px; height: 10px; border: solid #fff;
+    border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
   }
 
   .rp-body { flex: 1; min-width: 0; }
@@ -172,106 +176,68 @@
   .rp-desc { font-size: 13px; color: var(--rp-text-2); margin-top: 2px; }
 
   .rp-price {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--rp-text-2);
-    white-space: nowrap;
-    font-variant-numeric: tabular-nums;
-    transition: color .15s;
+    font-size: 15px; font-weight: 700; color: var(--rp-text-2);
+    white-space: nowrap; font-variant-numeric: tabular-nums; transition: color .15s;
   }
   .rp-item.on .rp-price { color: var(--rp-accent); }
 
   /* ---------- Итог ---------- */
   .rp-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-top: 24px;
-    padding: 18px 20px;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    margin-top: 24px; padding: 18px 20px;
     background: linear-gradient(135deg, #111827, #1f2937);
-    border-radius: 14px;
-    color: #fff;
+    border-radius: 14px; color: #fff;
   }
   .rp-total-label { font-size: 14px; color: #9ca3af; }
   .rp-total-val {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
+    font-size: 30px; font-weight: 800; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
   }
 
   .rp-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 
   .rp-cta {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 700;
-    letter-spacing: 0.01em;
-    cursor: pointer;
-    text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; padding: 16px; border-radius: 14px;
+    font-size: 15px; font-weight: 700; letter-spacing: 0.01em; cursor: pointer;
+    text-decoration: none; border: none;
     transition: transform .12s, box-shadow .15s, filter .15s;
     -webkit-tap-highlight-color: transparent;
   }
   .rp-cta svg { width: 20px; height: 20px; flex-shrink: 0; }
 
   .rp-cta-call {
-    background: var(--rp-accent);
-    color: #78350f;
+    background: var(--rp-accent); color: #78350f;
     border: 2px solid var(--rp-accent-dark);
     box-shadow: 0 10px 24px -8px rgba(245, 158, 11, .5);
   }
   .rp-cta-call:hover { filter: brightness(1.08); transform: translateY(-1px); }
   .rp-cta-call:active { transform: translateY(0); }
 
-  .rp-cta-tg {
-    background: #fff;
-    color: var(--rp-accent-dark);
-    border: 2px solid var(--rp-accent-dark);
-  }
+  .rp-cta-tg { background: #fff; color: var(--rp-accent-dark); border: 2px solid var(--rp-accent-dark); }
   .rp-cta-tg:hover { background: var(--rp-accent-light); transform: translateY(-1px); }
   .rp-cta-tg:active { transform: translateY(0); }
 
-  /* плашка определения устройства */
   .rp-detect {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    margin: -12px 0 20px;
-    padding: 10px 14px;
-    background: var(--rp-accent-light);
-    border: 1.5px dashed var(--rp-accent-dark);
-    border-radius: 12px;
-    font-size: 13px;
-    color: var(--rp-accent-dark);
+    display: none; align-items: center; gap: 8px; margin: -12px 0 20px;
+    padding: 10px 14px; background: var(--rp-accent-light);
+    border: 1.5px dashed var(--rp-accent-dark); border-radius: 12px;
+    font-size: 13px; color: var(--rp-accent-dark);
   }
   .rp-detect.show { display: flex; }
   .rp-detect svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-  /* строка скидки в панели итога */
   .rp-total-rows { display: flex; flex-direction: column; gap: 4px; }
   .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; gap: 8px; }
   .rp-total-row .rp-discount-val { color: var(--rp-accent); font-weight: 700; font-variant-numeric: tabular-nums; }
 
-  .rp-foot {
-    text-align: center;
-    font-size: 12px;
-    color: var(--rp-text-2);
-    margin-top: 16px;
-  }
+  .rp-foot { text-align: center; font-size: 12px; color: var(--rp-text-2); margin-top: 16px; }
 
   /* ===== Шапка с логотипом ===== */
   .im-head { text-align: center; margin-bottom: 20px; }
   .im-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
-  .im-logo-img { display: block; max-width: 240px; max-height: 100px; margin: 0 auto 6px; object-fit: contain; }
   .im-logo b { color: var(--rp-accent-dark); }
+  .im-logo-img { display: block; max-width: 240px; max-height: 100px; margin: 0 auto 6px; object-fit: contain; }
   .im-badge {
     display: inline-flex; align-items: center; gap: 8px; margin-top: 10px;
     padding: 8px 16px; background: var(--rp-accent-light);
@@ -299,13 +265,19 @@
   .im-map-hint { font-size: 12px; color: var(--rp-text-2); margin: -12px 0 20px; }
 
   /* ===== Отзывы ===== */
-  .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 24px; }
+  .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 14px; }
   .im-review {
-    padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff;
+    display: block; padding: 14px 16px; border: 1.5px solid var(--rp-border);
+    border-radius: 12px; background: #fff; color: inherit; text-decoration: none;
+    transition: border-color .15s, transform .12s;
   }
+  .im-review:hover { border-color: var(--rp-accent-dark); transform: translateY(-2px); }
   .im-review-stars { color: var(--rp-accent-dark); font-size: 14px; letter-spacing: 2px; }
   .im-review-text { font-size: 13px; color: var(--rp-text); margin: 8px 0; line-height: 1.5; }
   .im-review-src { font-size: 12px; color: var(--rp-text-2); }
+  .im-review-src .im-review-link { color: var(--rp-accent-dark); font-weight: 600; }
+  .rv-more-row { text-align: center; margin: 4px 0 10px; }
+  .rv-more-row .rp-cta { width: auto; padding: 11px 22px; font-size: 14px; display: inline-flex; }
   .im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
   .im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
 
@@ -314,8 +286,7 @@
   .bk-date {
     flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
     border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
-    transition: border-color .15s, background .15s;
-    -webkit-tap-highlight-color: transparent;
+    transition: border-color .15s, background .15s; -webkit-tap-highlight-color: transparent;
   }
   .bk-date:hover { border-color: var(--rp-accent-dark); }
   .bk-date.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); }
@@ -326,11 +297,19 @@
   .bk-time {
     padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
     border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
-    transition: border-color .15s, background .15s;
-    -webkit-tap-highlight-color: transparent;
+    transition: border-color .15s, background .15s; -webkit-tap-highlight-color: transparent;
   }
   .bk-time:hover { border-color: var(--rp-accent-dark); }
   .bk-time.on { border-color: var(--rp-accent-dark); background: var(--rp-accent); color: #78350f; }
+  .bk-time.bk-busy {
+    background: #f3f4f6; color: #c3c8d2; border-color: var(--rp-border);
+    border-style: dashed; text-decoration: line-through; cursor: not-allowed; pointer-events: none;
+  }
+  .bk-hint { font-size: 12px; color: var(--rp-text-2); margin: 2px 0 6px; }
+  .bk-hint i {
+    display: inline-block; width: 10px; height: 10px; border-radius: 3px;
+    background: #f3f4f6; border: 1px dashed #c7cbd6; margin-right: 6px; vertical-align: -1px;
+  }
   .bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
   .bk-input {
     width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
@@ -343,16 +322,21 @@
     font-size: 14px; color: var(--rp-text); white-space: pre-line;
   }
   .bk-summary.show { display: block; }
+  .bk-done {
+    display: none; margin-top: 14px; padding: 14px 16px; border-radius: 12px;
+    background: #ecfdf5; border: 1.5px solid #34d399; font-size: 14px; color: #064e3b;
+  }
+  .bk-done.show { display: block; }
+  .bk-done a { color: #059669; font-weight: 700; }
 
   /* ===== Мобильная версия ===== */
   @media (max-width: 640px) {
-    body { padding: 16px 12px; }
+    body { padding: 12px; }
     #rpCalcBody { padding: 20px 16px; border-radius: 14px; }
     .rp-title { font-size: 20px; }
     .rp-subtitle { font-size: 13px; }
     .im-logo { font-size: 26px; }
     .im-logo-img { max-width: 180px; max-height: 76px; }
-    .im-badge { font-size: 12px; padding: 6px 12px; }
     .rp-grid { grid-template-columns: 1fr; gap: 12px; }
     .rp-total { flex-direction: column; align-items: flex-start; padding: 16px; }
     .rp-total-val { font-size: 26px; }
@@ -365,6 +349,12 @@
     .rp-name { font-size: 14px; }
     .rp-desc { font-size: 12px; }
     .rp-price { font-size: 14px; }
+    .hero { min-height: 440px; background-position: center 15%; }
+    .hero-inner { padding: 22px 18px; }
+    .hero-title { font-size: 26px; }
+    .hero-cta .rp-cta { width: 100%; }
+    .topnav { top: 6px; }
+    .topnav a { padding: 8px 12px; font-size: 13px; }
   }
 </style>
 <base target="_blank">
@@ -372,9 +362,39 @@
 <body>
 
 <div class="rp-wrap">
+
+  <!-- Меню -->
+  <nav class="topnav">
+    <a href="#calc">Калькулятор</a>
+    <a href="#branches">Филиалы</a>
+    <a href="#reviews">Отзывы</a>
+    <a href="#booking">Запись</a>
+    <a href="tel:+74952042751" class="topnav-tel">☎ Позвонить</a>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div class="hero-badges">
+        <span>★ 5.0 на Яндекс.Картах</span>
+        <span>9 лет сервиса</span>
+        <span>3 филиала в Москве</span>
+      </div>
+      <h1 class="hero-title">Скорый ремонт телефонов</h1>
+      <div class="hero-sub">от 30 минут, тут же и при Вас · Apple, Samsung, Xiaomi, Huawei, Honor</div>
+      <div class="hero-cta">
+        <a class="rp-cta rp-cta-call" href="#calc">Рассчитать стоимость</a>
+        <a class="rp-cta rp-cta-ghost" href="tel:+74952042751">+7 (495) 204-27-51</a>
+      </div>
+    </div>
+  </header>
+
   <div id="rpLoader" class="rp-loading">Загрузка актуальных цен...</div>
 
   <div id="rpCalcBody" style="display: none;">
+
+    <!-- Калькулятор -->
+    <div id="calc"></div>
     <div class="rp-head">
       <div class="im-head">
         <img class="im-logo-img" src="logo.png" alt="iМомент — скорый ремонт телефонов" onerror="this.style.display='none';document.getElementById('imLogoText').style.display='block'">
@@ -425,13 +445,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         Позвонить
       </a>
-      <a class="rp-cta rp-cta-tg" id="rpTg" href="https://t.me/imoment2" target="_blank" rel="noopener">
+      <a class="rp-cta rp-cta-tg" id="rpTg" href="https://t.me/imoment_master" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.94 0A12 12 0 1 0 24 12 12 12 0 0 0 11.94 0zm5.89 8.16-1.97 9.3c-.15.66-.54.82-1.09.51l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.05 5.56-5.02c.24-.21-.05-.33-.37-.12l-6.87 4.33-2.96-.93c-.64-.2-.66-.64.14-.95l11.57-4.46c.54-.2 1.01.12.84.9z"/></svg>
         Написать в Telegram
       </a>
     </div>
 
-    <!-- Филиалы, отзывы и запись вынесены из сетки кнопок — на всю ширину карточки -->
+    <!-- Филиалы -->
+    <div id="branches"></div>
     <div class="im-section-title">Наши филиалы</div>
     <div class="im-section-sub">Выберите филиал — на карте появится метка, и он будет подставлен в запись на ремонт</div>
     <div class="im-branches" id="imBranches"></div>
@@ -441,36 +462,27 @@
     </div>
     <div class="im-map-hint">Нажмите на филиал выше — карта покажет его местоположение</div>
 
+    <!-- Отзывы -->
+    <div id="reviews"></div>
     <div class="im-section-title">Отзывы клиентов</div>
-    <div class="im-section-sub">Отзывы с Яндекс.Карт, где мы набрали 5.0</div>
-    <div class="im-reviews">
-      <div class="im-review">
-        <div class="im-review-stars">★★★★★</div>
-        <div class="im-review-text">«Всей семьёй ремонтируем айфоны только здесь. Адекватные цены, быстро, без навязывания лишних услуг. Разъём почистили бесплатно вместо платного ремонта!»</div>
-        <div class="im-review-src">— клиент с Яндекс.Карт</div>
-      </div>
-      <div class="im-review">
-        <div class="im-review-stars">★★★★★</div>
-        <div class="im-review-text">«Принёс iPhone SE 3, который перестал заряжаться после чужого ремонта. Под микроскопом нашли причину, через несколько часов — рабочий аппарат. Дешевле, чем у мастеров на Савёлке.»</div>
-        <div class="im-review-src">— клиент с Яндекс.Карт</div>
-      </div>
-      <div class="im-review">
-        <div class="im-review-stars">★★★★★</div>
-        <div class="im-review-text">«Не работала камера. Причину нашли быстро, заменили за 30–40 минут, запчасти в наличии. Спасибо мастеру!»</div>
-        <div class="im-review-src">— клиент с Яндекс.Карт</div>
-      </div>
-    </div>
+    <div class="im-section-sub">Свежие отзывы с Яндекс.Карт — мы набрали 5.0. Нажмите на отзыв, чтобы прочитать все на карточке компании.</div>
+    <div class="im-reviews" id="imReviews"></div>
+    <div class="rv-more-row"><button class="rp-cta rp-cta-tg" id="rvMore" type="button" style="display:none">Показать ещё отзывы</button></div>
 
+    <!-- Запись -->
+    <div id="booking"></div>
     <div class="im-section-title">Запись на ремонт</div>
-    <div class="im-section-sub">Выберите филиал, дату и время — запись уйдёт нам в Telegram</div>
+    <div class="im-section-sub">Выберите филиал, дату и время — запись сразу попадёт в календарь мастерской, а мы подтвердим по телефону</div>
     <div class="bk-dates" id="bkDates"></div>
+    <div class="bk-hint"><i></i>— это время уже занято другими клиентами</div>
     <div class="bk-times" id="bkTimes"></div>
     <div class="bk-fields">
       <input class="bk-input" id="bkName" type="text" placeholder="Ваше имя" autocomplete="name">
       <input class="bk-input" id="bkPhone" type="tel" placeholder="Телефон для связи" autocomplete="tel">
     </div>
-    <a class="rp-cta rp-cta-call" id="bkSubmit" href="#" style="text-decoration:none;">Записаться на ремонт</a>
+    <button class="rp-cta rp-cta-call" id="bkSubmit" type="button">Записаться на ремонт</button>
     <div class="bk-summary" id="bkSummary"></div>
+    <div class="bk-done" id="bkDone"></div>
     <div class="rp-foot">Работаем ежедневно с 10:00 до 21:00 · Защитное стекло — 500 ₽</div>
 
     <div class="rp-foot">Цены актуальны и подтягиваются из базы автоматически. Скидка 7% за каждую услугу, начиная со второй.</div>
@@ -479,12 +491,16 @@
 
 <script>
 (function () {
-  // Настройки подключения к вашей таблице
-  var SPREADSHEET_ID = "1-PJgoN7IQu75O2fDagWwYAugUvFpKzmmV8ZDSR9na1o";
-  var FORM_ID = "";
-  var PHONE_DISPLAY = "+7 (495) 204-27-51";
+  // Цены, занятые слоты и отзывы приходят через прокси на Google Apps Script —
+  // ID таблицы на клиенте не светится
+  var PRICES_URL = "https://script.google.com/macros/s/ВАШ_КОД_СЮДА/exec";
+  var PRICES_TOKEN = "imoment-prices-2026";  // тот же токен, что в Code.gs
+
+  var REVIEWS_LINK = 'https://yandex.ru/maps/org/aymoment/123656609402/reviews/';
 
   var DATA = {};
+  var busyByDate = {};   // {"12.09": ["14:00", "15:00"]}
+  var reviews = [];      // [{date, author, text}]
 
   var elLoader = document.getElementById('rpLoader');
   var elCalcBody = document.getElementById('rpCalcBody');
@@ -493,51 +509,24 @@
   var elList = document.getElementById('rpList');
   var elTotal = document.getElementById('rpTotal');
 
-  // Запрос к Google Sheets API
-  var url = 'https://docs.google.com/spreadsheets/d/' + SPREADSHEET_ID + '/gviz/tq?tqx=out:json';
-
-  fetch(url)
-    .then(function(res) { return res.text(); })
-    .then(function(text) {
-      var start = text.indexOf('{');
-      var end = text.lastIndexOf('}');
-      var jsonString = text.substring(start, end + 1);
-      var json = JSON.parse(jsonString);
-
-      parseGoogleJson(json);
+  // Запрос данных через прокси (Apps Script)
+  fetch(PRICES_URL + '?token=' + encodeURIComponent(PRICES_TOKEN) + '&r=' + Date.now())
+    .then(function(res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(function(json) {
+      if (!json || json.error) throw new Error((json && json.error) || 'bad data');
+      DATA = json.prices || {};
+      busyByDate = json.busy || {};
+      reviews = json.reviews || [];
+      renderReviews();
       initCalc();
     })
     .catch(function(err) {
       console.error(err);
       elLoader.innerText = "Ошибка загрузки данных. Пожалуйста, обновите страницу.";
     });
-
-  function parseGoogleJson(json) {
-    var rows = json.table.rows;
-    if (!rows || rows.length === 0) return;
-
-    var idxBrand = 0, idxModel = 1, idxProblem = 2, idxPrice = 3, idxDesc = 4;
-
-    for (var i = 0; i < rows.length; i++) {
-      var row = rows[i].c;
-      if (!row || row.length < 4) continue;
-
-      var brand = row[idxBrand] && row[idxBrand].v !== null ? String(row[idxBrand].v).trim() : "";
-      var model = row[idxModel] && row[idxModel].v !== null ? String(row[idxModel].v).trim() : "";
-      var problem = row[idxProblem] && row[idxProblem].v !== null ? String(row[idxProblem].v).trim() : "";
-      var priceVal = row[idxPrice] && row[idxPrice].v !== null ? row[idxPrice].v : 0;
-      var desc = row[idxDesc] && row[idxDesc].v !== null ? String(row[idxDesc].v).trim() : "";
-
-      if (brand.toLowerCase() === 'brand' || !brand || !model || !problem) continue;
-
-      var price = parseInt(String(priceVal).replace(/[^\d]/g, ''), 10) || 0;
-
-      if (!DATA[brand]) DATA[brand] = {};
-      if (!DATA[brand][model]) DATA[brand][model] = {};
-
-      DATA[brand][model][problem] = { p: price, d: desc };
-    }
-  }
 
   function initCalc() {
     var brands = Object.keys(DATA);
@@ -551,20 +540,14 @@
 
     elBrand.innerHTML = brands.map(function(b) { return '<option value="'+b+'">'+b+'</option>'; }).join('');
 
-    elBrand.addEventListener('change', function () {
-      updateModels(this.value);
-    });
-
-    elModel.addEventListener('change', function () {
-      updateProblems(elBrand.value, this.value);
-    });
+    elBrand.addEventListener('change', function () { updateModels(this.value); });
+    elModel.addEventListener('change', function () { updateProblems(elBrand.value, this.value); });
 
     updateModels(brands[0]);
-
     applyDetectedDevice(brands);
   }
 
-  // ====== Определение устройства посетителя ======
+  // ====== Определение устройства ======
   var SAMSUNG_CODES = {
     'SM-S938': 'Galaxy S25 Ultra', 'SM-S935': 'Galaxy S25+', 'SM-S931': 'Galaxy S25',
     'SM-S928': 'Galaxy S24 Ultra', 'SM-S926': 'Galaxy S24+',  'SM-S921': 'Galaxy S24',
@@ -583,29 +566,22 @@
 
   function detectDevice() {
     var ua = navigator.userAgent;
-
     if (/iPhone/.test(ua)) return { brand: 'iPhone', model: null };
-
     var m = ua.match(/Android[\d.]*;\s*([^;)]+)/i);
     var token = m ? m[1].trim() : '';
     if (!token) return null;
     token = token.replace(/^\w+\s+\w+\s+/, '');
-
     var sm = token.match(/SM-[A-Z]?\d{3,4}|GT-I?\d{4}/i);
     if (sm) {
       var code = sm[0].toUpperCase().slice(0, 7);
       return { brand: 'Samsung', model: SAMSUNG_CODES[code] || null };
     }
-
     var low = token.toLowerCase();
     for (var brand in DATA) {
       for (var model in DATA[brand]) {
-        if (low.indexOf(model.toLowerCase()) !== -1) {
-          return { brand: brand, model: model };
-        }
+        if (low.indexOf(model.toLowerCase()) !== -1) return { brand: brand, model: model };
       }
     }
-
     if (/huawei|harmonyos/i.test(token)) return { brand: 'Huawei', model: null };
     if (/honor/i.test(token)) return { brand: 'Honor', model: null };
     if (/redmi|poco|xiaomi/i.test(token)) return { brand: 'Xiaomi', model: null };
@@ -617,7 +593,6 @@
     if (/tecno/i.test(token)) return { brand: 'Tecno', model: null };
     if (/infinix/i.test(token)) return { brand: 'Infinix', model: null };
     if (/nokia/i.test(token)) return { brand: 'Nokia', model: null };
-
     return null;
   }
 
@@ -626,12 +601,9 @@
     var badge = document.getElementById('rpDetect');
     var badgeText = document.getElementById('rpDetectText');
     if (!dev) return;
-
     if (brands.indexOf(dev.brand) === -1) return;
-
     elBrand.value = dev.brand;
     elBrand.dispatchEvent(new Event('change'));
-
     if (dev.model && DATA[dev.brand] && DATA[dev.brand][dev.model]) {
       elModel.value = dev.model;
       elModel.dispatchEvent(new Event('change'));
@@ -646,15 +618,12 @@
   function updateModels(brand) {
     var models = Object.keys(DATA[brand] || {});
     elModel.innerHTML = models.map(function(m) { return '<option value="'+m+'">'+m+'</option>'; }).join('');
-    if(models.length > 0) {
-      updateProblems(brand, models[0]);
-    }
+    if(models.length > 0) updateProblems(brand, models[0]);
   }
 
   function updateProblems(brand, model) {
     var problems = DATA[brand] && DATA[brand][model] ? DATA[brand][model] : {};
     var html = '';
-
     for (var name in problems) {
       var item = problems[name];
       var priceStr = item.p.toLocaleString('ru-RU') + ' ₽';
@@ -668,19 +637,14 @@
               '</div>';
     }
     elList.innerHTML = html;
-
-    var items = elList.querySelectorAll('.rp-item');
-    items.forEach(function(item) {
+    elList.querySelectorAll('.rp-item').forEach(function(item) {
       item.addEventListener('click', function(e) {
         var chk = this.querySelector('input');
-        if (e.target !== chk) {
-          chk.checked = !chk.checked;
-        }
+        if (e.target !== chk) chk.checked = !chk.checked;
         this.classList.toggle('on', chk.checked);
         calcTotal();
       });
     });
-
     calcTotal();
   }
 
@@ -729,33 +693,64 @@
              (pct > 0 ? 'Скидка: ' + pct + '% (−' + discount.toLocaleString('ru-RU') + ' ₽)\n' : '') +
              'Итого по калькулятору: ' + total.toLocaleString('ru-RU') + ' ₽';
     }
-    document.getElementById('rpTg').href = 'https://t.me/imoment2?text=' + encodeURIComponent(text);
+    document.getElementById('rpTg').href = 'https://t.me/imoment_master?text=' + encodeURIComponent(text);
+  }
+
+  // ===== Отзывы: рендер из данных, 3 + «ещё 5», даты, ссылка на Яндекс =====
+  function reviewCard(r) {
+    return '<a class="im-review" href="' + REVIEWS_LINK + '" target="_blank" rel="noopener">' +
+      '<div class="im-review-stars">★★★★★</div>' +
+      '<div class="im-review-text">«' + r.text + '»</div>' +
+      '<div class="im-review-src">— ' + r.author + (r.date ? ' · ' + r.date : '') +
+      ' · <span class="im-review-link">читать на Яндекс.Картах →</span></div></a>';
+  }
+
+  function renderReviews() {
+    var wrap = document.getElementById('imReviews');
+    var moreBtn = document.getElementById('rvMore');
+
+    if (!reviews.length) {
+      // Фолбэк, пока лист «Отзывы» не заполнен
+      wrap.innerHTML = [
+        { author: 'клиент с Яндекс.Карт', date: '', text: 'Всей семьёй ремонтируем айфоны только здесь. Адекватные цены, быстро, без навязывания лишних услуг. Разъём почистили бесплатно вместо платного ремонта!' },
+        { author: 'клиент с Яндекс.Карт', date: '', text: 'Принёс iPhone SE 3, который перестал заряжаться после чужого ремонта. Под микроскопом нашли причину, через несколько часов — рабочий аппарат. Дешевле, чем у мастеров на Савёлке.' },
+        { author: 'клиент с Яндекс.Карт', date: '', text: 'Не работала камера. Причину нашли быстро, заменили за 30–40 минут, запчасти в наличии. Спасибо мастеру!' }
+      ].map(reviewCard).join('');
+      moreBtn.style.display = 'none';
+      return;
+    }
+
+    var shown = 3;
+    wrap.innerHTML = reviews.slice(0, shown).map(reviewCard).join('');
+    moreBtn.style.display = reviews.length > shown ? 'inline-flex' : 'none';
+    moreBtn.onclick = function() {
+      var next = reviews.slice(shown, shown + 5); // не более ещё 5
+      wrap.insertAdjacentHTML('beforeend', next.map(reviewCard).join(''));
+      shown += next.length;
+      if (shown >= reviews.length) moreBtn.style.display = 'none';
+    };
   }
 
   // ===== Филиалы =====
-  // lon — долгота, lat — широта (координаты с Яндекс.Карт)
   var BRANCHES = [
     { name: 'ш. Энтузиастов, 12к2', addr: 'этаж 3 · м. Авиамоторная', rating: '5.0 · 55 оценок',  lon: 37.707107, lat: 55.747368 },
     { name: 'Рязанский проспект, 2к2', addr: 'этаж 2 · м. Нижегородская', rating: '5.0 · 170 оценок', lon: 37.730437, lat: 55.729873 },
     { name: '7-я Кожуховская, 9', addr: 'этаж 3', rating: '4.5 · 11 оценок', lon: 37.675109, lat: 55.710692 }
   ];
-  var branchIdx = -1, bkDate = null, bkTime = null;
+  var branchIdx = -1, bkDate = null, bkDateKey = null, bkTime = null;
 
   var mapFrame = document.getElementById('imMapFrame');
 
-  // Строим URL виджета Яндекс.Карт: центр, зум и метки (pt)
   function mapUrl(centerLon, centerLat, zoom, points) {
     var pts = points.map(function(p) { return p.lon + ',' + p.lat + ',pm2rdl'; }).join('~');
     return 'https://yandex.ru/map-widget/v1/?ll=' + centerLon + '%2C' + centerLat +
            '&z=' + zoom + '&pt=' + pts;
   }
 
-  // Изначально — обзорная карта со всеми тремя филиалами
   mapFrame.src = mapUrl(37.705, 55.733, 11, BRANCHES);
 
   function showBranchOnMap(i) {
     var b = BRANCHES[i];
-    // Карта приближается к выбранному филиалу, остальные остаются метками
     mapFrame.src = mapUrl(b.lon, b.lat, 16, BRANCHES);
   }
 
@@ -788,7 +783,9 @@
     chip.addEventListener('click', function() {
       dEl.querySelectorAll('.bk-date').forEach(function(x) { x.classList.remove('on'); });
       this.classList.add('on');
-      bkDate = this.querySelector('.bk-day').innerText + ' (' + this.querySelector('.bk-dow').innerText + ')';
+      bkDateKey = this.querySelector('.bk-day').innerText;
+      bkDate = bkDateKey + ' (' + this.querySelector('.bk-dow').innerText + ')';
+      markBusy();
       updateBkSummary();
     });
     dEl.appendChild(chip);
@@ -809,15 +806,27 @@
     tEl.appendChild(t);
   }
 
-  // ===== Отправка записи в Telegram =====
-  function updateBkSummary() {
-    var s = document.getElementById('bkSummary');
-    if (branchIdx === -1 || !bkDate || !bkTime) { s.classList.remove('show'); return; }
-    var text = 'Здравствуйте! Хочу записаться на ремонт.\n' +
-               'Филиал: ' + BRANCHES[branchIdx].name + '\n' +
-               'Дата: ' + bkDate + ' в ' + bkTime;
+  // Помечаем занятые слоты выбранной даты
+  function markBusy() {
+    var busy = (bkDateKey && busyByDate[bkDateKey]) || [];
+    tEl.querySelectorAll('.bk-time').forEach(function(el) {
+      var isBusy = busy.indexOf(el.innerText) !== -1;
+      el.classList.toggle('bk-busy', isBusy);
+      if (isBusy && el.innerText === bkTime) {
+        el.classList.remove('on');
+        bkTime = null;
+      }
+    });
+  }
 
-    // Выбранные в калькуляторе поломки и итоговая цена
+  // ===== Текст записи (для Telegram и календаря) =====
+  function buildBookingInfo() {
+    var info = {
+      text: 'Здравствуйте! Хочу записаться на ремонт.\n' +
+            'Филиал: ' + BRANCHES[branchIdx].name + '\n' +
+            'Дата: ' + bkDate + ' в ' + bkTime,
+      services: '', total: '', hasServices: false
+    };
     var names = [];
     var sum = 0;
     elList.querySelectorAll('.rp-item input:checked').forEach(function(chk) {
@@ -825,28 +834,105 @@
       names.push(item.getAttribute('data-name'));
       sum += parseInt(item.getAttribute('data-price'), 10);
     });
-    var summaryTotal = '';
     if (names.length > 0) {
       var pct = names.length >= 2 ? Math.min((names.length - 1) * DISCOUNT_PER_ITEM, DISCOUNT_MAX) : 0;
       var discount = Math.round(sum * pct / 100);
       var total = sum - discount;
-      text += '\nЧто чинить: ' + names.join(', ');
-      if (pct > 0) text += '\nСкидка: ' + pct + '% (−' + discount.toLocaleString('ru-RU') + ' ₽)';
-      text += '\nИтого по калькулятору: ' + total.toLocaleString('ru-RU') + ' ₽';
-      summaryTotal = 'Итого: ' + total.toLocaleString('ru-RU') + ' ₽';
+      info.services = names.join(', ');
+      info.hasServices = true;
+      info.text += '\nЧто чинить: ' + info.services;
+      if (pct > 0) info.text += '\nСкидка: ' + pct + '% (−' + discount.toLocaleString('ru-RU') + ' ₽)';
+      info.total = total.toLocaleString('ru-RU') + ' ₽';
+      info.text += '\nИтого по калькулятору: ' + info.total;
     }
-
     var name = document.getElementById('bkName').value.trim();
     var phone = document.getElementById('bkPhone').value.trim();
-    if (name) text += '\nИмя: ' + name;
-    if (phone) text += '\nТелефон: ' + phone;
+    if (name) info.text += '\nИмя: ' + name;
+    if (phone) info.text += '\nТелефон: ' + phone;
+    return info;
+  }
+
+  // ===== Сводка под кнопкой =====
+  function updateBkSummary() {
+    var s = document.getElementById('bkSummary');
+    if (branchIdx === -1 || !bkDate || !bkTime) { s.classList.remove('show'); return; }
+    var info = buildBookingInfo();
     s.innerText = '✅ Ваша запись:\n' + BRANCHES[branchIdx].name + '\n' + bkDate + ' в ' + bkTime +
-                  (summaryTotal ? '\n' + summaryTotal : '');
+                  (info.hasServices ? '\nИтого: ' + info.total : '');
     s.classList.add('show');
-    document.getElementById('bkSubmit').href = 'https://t.me/imoment2?text=' + encodeURIComponent(text);
   }
   document.getElementById('bkName').addEventListener('input', updateBkSummary);
   document.getElementById('bkPhone').addEventListener('input', updateBkSummary);
+
+  // ===== Отправка записи: Google Календарь + лист «Записи» =====
+  document.getElementById('bkSubmit').addEventListener('click', function() {
+    var done = document.getElementById('bkDone');
+    if (branchIdx === -1 || !bkDate || !bkTime) {
+      done.innerHTML = '⚠️ Выберите филиал, дату и время записи.';
+      done.classList.add('show');
+      return;
+    }
+    var name = document.getElementById('bkName').value.trim();
+    var phone = document.getElementById('bkPhone').value.trim();
+    if (!name || !phone) {
+      done.innerHTML = '⚠️ Укажите имя и телефон — без них мы не сможем подтвердить запись.';
+      done.classList.add('show');
+      return;
+    }
+    var info = buildBookingInfo();
+    var btn = this;
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    btn.innerText = 'Отправляем запись…';
+
+    fetch(PRICES_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },  // text/plain — без CORS-preflight
+      body: JSON.stringify({
+        token: PRICES_TOKEN,
+        date: bkDateKey,
+        time: bkTime,
+        branch: BRANCHES[branchIdx].name,
+        name: name,
+        phone: phone,
+        services: info.services,
+        total: info.hasServices ? info.total : ''
+      })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(resp) {
+      btn.disabled = false; btn.style.opacity = ''; btn.innerText = 'Записаться на ремонт';
+      if (resp && resp.ok) {
+        // локально помечаем слот занятым
+        if (!busyByDate[bkDateKey]) busyByDate[bkDateKey] = [];
+        busyByDate[bkDateKey].push(bkTime);
+        markBusy();
+        document.getElementById('bkSummary').classList.remove('show');
+        done.innerHTML = '✅ <b>Запись принята!</b><br>' +
+          BRANCHES[branchIdx].name + '<br>' + bkDate + ' в ' + bkTime +
+          (info.hasServices ? '<br>Итого: ' + info.total : '') +
+          '<br>Событие добавлено в календарь мастерской — подтвердим по телефону ' + phone + '. ' +
+          '<br><a href="https://t.me/imoment_master?text=' + encodeURIComponent(info.text) + '" target="_blank" rel="noopener">Написать нам в Telegram</a>';
+        done.classList.add('show');
+      } else if (resp && resp.error === 'busy') {
+        if (!busyByDate[bkDateKey]) busyByDate[bkDateKey] = [];
+        if (busyByDate[bkDateKey].indexOf(bkTime) === -1) busyByDate[bkDateKey].push(bkTime);
+        bkTime = null;
+        markBusy();
+        updateBkSummary();
+        done.innerHTML = '⏰ К сожалению, время ' + ' уже заняли другой записью. Выберите другое — серым отмечено занятое.';
+        done.classList.add('show');
+      } else {
+        throw new Error((resp && resp.error) || 'unknown');
+      }
+    })
+    .catch(function() {
+      btn.disabled = false; btn.style.opacity = ''; btn.innerText = 'Записаться на ремонт';
+      done.innerHTML = '⚠️ Автоматическая запись временно недоступна.<br>' +
+        '<a href="https://t.me/imoment_master?text=' + encodeURIComponent(buildBookingInfo().text) + '" target="_blank" rel="noopener">Запишитесь через Telegram — одним нажатием</a>';
+      done.classList.add('show');
+    });
+  });
 
 })();
 </script>
