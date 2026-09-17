@@ -55,9 +55,9 @@
     color: #fff;
     box-shadow: var(--rp-shadow);
   }
-  .hero-top { text-align: center; padding: 32px 20px 0; }
+  .hero-top { text-align: center; padding: 26px 20px 0; }
   .hero-logo-img { display: block; width: 250px; max-width: 66%; margin: 0 auto; }
-  .hero-photo { margin-top: 20px; background: #0e0e0e; }
+  .hero-photo { margin-top: 8px; background: #0e0e0e; }
   .hero-photo img { width: 100%; display: block; }
   .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 22px 20px 0; }
   .hero-badges span {
@@ -236,15 +236,7 @@
   /* ===== Фото команды (внизу, после отзывов) + цитаты мастеров ===== */
   .team-wrap { position: relative; margin-top: 18px; border-radius: var(--rp-radius); overflow: hidden; }
   .team-wrap .team-photo { width: 100%; display: block; }
-  .team-strip {
-    position: absolute; left: 0; right: 0; bottom: 0;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
-    padding: 30px 16px 14px;
-    background: linear-gradient(to top, rgba(17, 24, 39, .85) 30%, rgba(17, 24, 39, 0));
-    pointer-events: none;
-  }
-  .ts-quote { color: #fff; font-size: 11.5px; line-height: 1.4; font-style: italic; opacity: .96; }
-  .ts-name { margin-top: 6px; color: #fbbf24; font-size: 11.5px; font-weight: 700; }
+
 
   /* ===== Отзывы ===== */
   .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 14px; }
@@ -336,9 +328,7 @@
     .hero-title { font-size: 25px; }
     .hero-sub-img { width: min(340px, 88%); margin-top: 12px; }
     .hero-cta { grid-template-columns: 1fr; padding: 18px 16px 22px; }
-    .team-strip { grid-template-columns: 1fr 1fr; gap: 8px; padding: 22px 10px 10px; }
-    .ts-quote { font-size: 10px; }
-    .ts-name { font-size: 10px; margin-top: 4px; }
+
     .rp-grid { grid-template-columns: 1fr; gap: 12px; }
     .rp-total { flex-direction: column; align-items: flex-start; padding: 16px; }
     .rp-total-val { font-size: 26px; }
@@ -463,27 +453,9 @@
     <div class="im-reviews" id="imReviews"></div>
     <div class="rv-more-row"><button class="rp-cta rp-cta-tg" id="rvMore" type="button" style="display:none">Показать ещё отзывы</button></div>
 
-    <!-- Фото команды — в самом низу, после отзывов; цитаты и подписи (рыба, отредактируйте) -->
+    <!-- Фото команды с цитатами — в самом низу, после отзывов -->
     <div class="team-wrap">
       <img class="team-photo" src="team.jpg" alt="Команда iМомент за работой" loading="lazy">
-      <div class="team-strip">
-        <div class="ts-cell">
-          <div class="ts-quote">«Быстро — это когда запчасти в наличии, а руки набиты»</div>
-          <div class="ts-name">Дмитрий · стаж 8 лет</div>
-        </div>
-        <div class="ts-cell">
-          <div class="ts-quote">«Разбираем до винтика — собираем как для себя»</div>
-          <div class="ts-name">Артём · стаж 6 лет</div>
-        </div>
-        <div class="ts-cell">
-          <div class="ts-quote">«Не меняем то, что можно починить — говорим честно»</div>
-          <div class="ts-name">Максим · стаж 10 лет</div>
-        </div>
-        <div class="ts-cell">
-          <div class="ts-quote">«Чиним не симптомы, а причину. Диагностика — бесплатно»</div>
-          <div class="ts-name">Александр · основатель · стаж 12 лет</div>
-        </div>
-      </div>
     </div>
 
     <div class="rp-foot">Работаем ежедневно с 10:00 до 21:45 · 3 филиала · Защитное стекло — 500 ₽</div>
