@@ -55,7 +55,7 @@
     color: #fff;
     box-shadow: var(--rp-shadow);
   }
-  .hero-top { text-align: center; padding: 18px 20px 0; }
+  .hero-top { text-align: center; padding: 30px 20px 0; }
   .hero-logo-img { display: block; width: 250px; max-width: 66%; margin: 0 auto; }
   .hero-photo { margin-top: 6px; background: #0e0e0e; }
   .hero-photo img { width: 100%; display: block; }
@@ -72,7 +72,7 @@
   .hero-title span { color: #f39200; }
   .hero-sub-img { display: block; width: min(430px, 84%); margin: 16px auto 0; }
   .hero-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 22px 20px 26px; }
-  .rp-cta-hero { background: #f59c00; color: #141414; border: 2px solid #f59c00; font-size: 16px; }
+  .rp-cta-hero { background: #f59e0b; color: #422006; border: 2px solid #f59e0b; font-size: 16px; }
   .rp-cta-hero:hover { filter: brightness(1.07); transform: translateY(-1px); }
   .rp-cta-dark { background: transparent; color: #fff; border: 2px solid #f39200; }
   .rp-cta-dark:hover { background: rgba(243, 146, 0, .12); transform: translateY(-1px); }
@@ -193,8 +193,8 @@
   .rp-cta svg { width: 20px; height: 20px; flex-shrink: 0; }
 
   .rp-cta-call {
-    background: var(--rp-accent); color: #78350f;
-    border: 2px solid var(--rp-accent-dark);
+    background: #f59e0b; color: #422006;
+    border: 2px solid #d97706;
     box-shadow: 0 10px 24px -8px rgba(245, 158, 11, .5);
   }
   .rp-cta-call:hover { filter: brightness(1.08); transform: translateY(-1px); }
@@ -235,7 +235,14 @@
 
   /* ===== Фото команды (внизу, после отзывов) + цитаты мастеров ===== */
   .team-wrap { position: relative; margin-top: 18px; border-radius: var(--rp-radius); overflow: hidden; }
-  .team-wrap .team-photo { width: 100%; display: block; }
+  .team-wrap .team-photo { width: 100%; display: block; animation: team-zoom 22s ease-in-out infinite alternate; will-change: transform; }
+  @keyframes team-zoom {
+    0% { transform: scale(1) translateY(0); }
+    100% { transform: scale(1.05) translateY(-6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team-wrap .team-photo { animation: none; }
+  }
 
 
   /* ===== Отзывы ===== */
@@ -716,6 +723,8 @@
       done.classList.add('show');
       return;
     }
+    // фиксируем выбор: асинхронное обновление не должно обнулить время до ответа сервера
+    var selTime = bkTime, selDate = bkDate, selKey = bkDateKey;
     var info = buildBookingInfo();
     var btn = this;
     btn.disabled = true;
@@ -727,8 +736,8 @@
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({
         token: API_TOKEN,
-        date: bkDateKey,
-        time: bkTime,
+        date: selKey,
+        time: selTime,
         branch: BRANCHES[branchIdx].name,
         name: name,
         phone: phone,
@@ -740,19 +749,20 @@
     .then(function(resp) {
       btn.disabled = false; btn.style.opacity = ''; btn.innerText = 'Записаться на ремонт';
       if (resp && resp.ok) {
-        if (!busyByDate[bkDateKey]) busyByDate[bkDateKey] = [];
-        if (busyByDate[bkDateKey].indexOf(bkTime) === -1) busyByDate[bkDateKey].push(bkTime);
+        if (!busyByDate[selKey]) busyByDate[selKey] = [];
+        if (busyByDate[selKey].indexOf(selTime) === -1) busyByDate[selKey].push(selTime);
+        saveCache();
         markBusy();
         document.getElementById('bkSummary').classList.remove('show');
         done.innerHTML = '✅ <b>Запись принята!</b><br>' +
-          BRANCHES[branchIdx].name + '<br>' + bkDate + ' в ' + bkTime +
+          BRANCHES[branchIdx].name + '<br>' + selDate + ' в ' + selTime +
           (info.hasServices ? '<br>Итого: ' + info.total : '') +
           '<br>Событие добавлено в календарь мастерской — подтвердим по телефону ' + phone + '. ' +
           '<br><a href="' + TG_LINK + '?text=' + encodeURIComponent(info.text) + '" target="_blank" rel="noopener">Написать нам в Telegram</a>';
         done.classList.add('show');
       } else if (resp && resp.error === 'busy') {
-        if (!busyByDate[bkDateKey]) busyByDate[bkDateKey] = [];
-        if (busyByDate[bkDateKey].indexOf(bkTime) === -1) busyByDate[bkDateKey].push(bkTime);
+        if (!busyByDate[selKey]) busyByDate[selKey] = [];
+        if (busyByDate[selKey].indexOf(selTime) === -1) busyByDate[selKey].push(selTime);
         bkTime = null;
         markBusy();
         updateBkSummary();
@@ -765,7 +775,7 @@
     .catch(function() {
       btn.disabled = false; btn.style.opacity = ''; btn.innerText = 'Записаться на ремонт';
       done.innerHTML = '⚠️ Автоматическая запись временно недоступна.<br>' +
-        '<a href="' + TG_LINK + '?text=' + encodeURIComponent(buildBookingInfo().text) + '" target="_blank" rel="noopener">Запишитесь через Telegram — одним нажатием</a>';
+        '<a href="' + TG_LINK + '?text=' + encodeURIComponent(info.text) + '" target="_blank" rel="noopener">Запишитесь через Telegram — одним нажатием</a>';
       done.classList.add('show');
     });
   });
@@ -849,6 +859,19 @@
       });
     }
     return out;
+  }
+
+  // Слияние занятых слотов: новые добавляются, уже известные не пропадают
+  function mergeBusy(base, add) {
+    base = base || {};
+    for (var k in (add || {})) {
+      if (!base[k]) base[k] = [];
+      (add[k] || []).forEach(function(t) {
+        t = normTime(t);
+        if (base[k].indexOf(t) === -1) base[k].push(t);
+      });
+    }
+    return base;
   }
 
   // ---------- преобразование строк таблицы в данные калькулятора ----------
@@ -962,7 +985,7 @@
     if (!Object.keys(prices).length) throw new Error('empty prices');
     var pricesChanged = JSON.stringify(prices) !== JSON.stringify(DATA);
     DATA = prices;
-    if (busy) busyByDate = busy;
+    if (busy) busyByDate = mergeBusy(busyByDate, busy); // слияние: известные занятые слоты не теряются
     if (revs) reviews = revs;
     saveCache();
     if (!inited) { tryInit(); return; }
@@ -1038,8 +1061,23 @@
       });
   }
 
+  // Подтягиваем занятые слоты из календаря мастерской (Apps Script) — в фоне, без блокировок.
+  // Так свежие записи мгновенно становятся «серыми» у всех посетителей.
+  function mergeScriptBusyQuiet() {
+    fetch(API_URL + '?token=' + encodeURIComponent(API_TOKEN) + '&r=' + Date.now())
+      .then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (!json || json.error || !json.busy) return;
+        busyByDate = mergeBusy(busyByDate, normBusy(json.busy));
+        saveCache();
+        markBusy();
+      })
+      .catch(function() {});
+  }
+
   function refreshData() {
     syncFromSheet()
+      .then(function() { mergeScriptBusyQuiet(); })
       .catch(function() { return syncFromScript(); })
       .catch(function() {
         if (!inited) {
