@@ -36,7 +36,7 @@
     background: var(--rp-bg);
     color: var(--rp-text);
     line-height: 1.45;
-    padding: 16px 16px 24px;
+    padding: 20px 16px 28px;
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: rgba(251, 191, 36, .35); }
@@ -59,7 +59,7 @@
   .hero-logo-img { display: block; width: 250px; max-width: 66%; margin: 0 auto; }
   .hero-photo { margin-top: 6px; background: #0e0e0e; }
   .hero-photo img { width: 100%; display: block; }
-  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 22px 20px 0; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 26px 20px 0; }
   .hero-badges span {
     padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 700;
     color: #fff; border: 1.5px solid rgba(243, 146, 0, .6); background: rgba(243, 146, 0, .06);
@@ -67,12 +67,12 @@
   .hero-badges .star { color: #f39200; }
   .hero-title {
     text-align: center; font-size: 35px; font-weight: 800; letter-spacing: .03em;
-    line-height: 1.12; text-transform: uppercase; padding: 18px 16px 0;
+    line-height: 1.12; text-transform: uppercase; padding: 22px 16px 0;
   }
   .hero-title span { color: #f39200; }
-  .hero-sub-img { display: block; width: min(430px, 84%); margin: 16px auto 0; }
-  .hero-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 22px 20px 26px; }
-  .rp-cta-hero { background: #f59e0b; color: #422006; border: 2px solid #f59e0b; font-size: 16px; }
+  .hero-sub-img { display: block; width: min(430px, 84%); margin: 20px auto 0; }
+  .hero-cta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 26px 20px 30px; }
+  .rp-cta-hero { background: #f59e0b; color: #422006; border: 2px solid #f59e0b; }
   .rp-cta-hero:hover { filter: brightness(1.07); transform: translateY(-1px); }
   .rp-cta-dark { background: transparent; color: #fff; border: 2px solid #f39200; }
   .rp-cta-dark:hover { background: rgba(243, 146, 0, .12); transform: translateY(-1px); }
@@ -91,11 +91,11 @@
     background: var(--rp-card);
     border-radius: var(--rp-radius);
     box-shadow: var(--rp-shadow);
-    padding: 28px 28px 24px;
-    margin-top: 16px;
+    padding: 32px 32px 28px;
+    margin-top: 20px;
   }
 
-  .rp-head { margin-bottom: 24px; }
+  .rp-head { margin-bottom: 30px; }
   .rp-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
   .rp-subtitle { font-size: 14px; color: var(--rp-text-2); margin-top: 6px; }
 
@@ -103,9 +103,9 @@
   .rp-label {
     display: block; font-size: 12px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--rp-text-2); margin-bottom: 8px;
+    color: var(--rp-text-2); margin-bottom: 10px;
   }
-  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .rp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 30px; }
 
   .rp-select-wrap { position: relative; }
   .rp-select-wrap::after {
@@ -170,7 +170,7 @@
   /* ---------- Итог (тёмная панель, как в «Цвета.html») ---------- */
   .rp-total {
     display: flex; justify-content: space-between; align-items: center; gap: 12px;
-    margin-top: 24px; padding: 18px 20px;
+    margin-top: 30px; padding: 18px 20px;
     background: linear-gradient(135deg, #111827, #1f2937);
     border-radius: 14px; color: #fff;
   }
@@ -180,7 +180,7 @@
     font-variant-numeric: tabular-nums; white-space: nowrap; color: #fff;
   }
 
-  .rp-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .rp-cta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
 
   .rp-cta {
     display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -214,10 +214,10 @@
   .rp-total-row { display: flex; justify-content: space-between; font-size: 13px; color: #9ca3af; gap: 8px; }
   .rp-total-row .rp-discount-val { color: var(--rp-accent); font-weight: 700; font-variant-numeric: tabular-nums; }
 
-  .rp-foot { text-align: center; font-size: 12px; color: var(--rp-text-2); margin-top: 16px; }
+  .rp-foot { text-align: center; font-size: 12px; color: var(--rp-text-2); margin-top: 20px; }
 
   /* ===== Филиалы ===== */
-  .im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  .im-branches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
   .im-branch {
     padding: 14px 16px; border: 1.5px solid var(--rp-border); border-radius: 12px;
     background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
@@ -230,11 +230,19 @@
   .im-branch-rating { font-size: 13px; color: var(--rp-accent-dark); font-weight: 600; margin-top: 4px; }
 
   /* ===== Карта ===== */
-  .im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 8px 0 16px; }
+  .im-map { border-radius: 14px; overflow: hidden; border: 1.5px solid var(--rp-border); margin: 12px 0 16px; }
+  .im-map-link {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 12px 0 4px; padding: 12px; border-radius: 12px;
+    border: 1.5px dashed var(--rp-border); color: var(--rp-text-2);
+    font-size: 13.5px; font-weight: 600; text-decoration: none;
+    transition: border-color .15s, color .15s;
+  }
+  .im-map-link:hover { border-color: var(--rp-accent-dark); color: var(--rp-accent-dark); }
   .im-map iframe { width: 100%; height: 320px; border: 0; display: block; }
 
   /* ===== Фото команды (внизу, после отзывов) + цитаты мастеров ===== */
-  .team-wrap { position: relative; margin-top: 18px; border-radius: var(--rp-radius); overflow: hidden; }
+  .team-wrap { position: relative; margin-top: 24px; border-radius: var(--rp-radius); overflow: hidden; }
   .team-wrap .team-photo { width: 100%; display: block; animation: team-zoom 22s ease-in-out infinite alternate; will-change: transform; }
   @keyframes team-zoom {
     0% { transform: scale(1) translateY(0); }
@@ -246,7 +254,7 @@
 
 
   /* ===== Отзывы ===== */
-  .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0 14px; }
+  .im-reviews { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0 18px; }
   .im-review {
     display: block; padding: 14px 16px; border: 1.5px solid var(--rp-border);
     border-radius: 12px; background: #fff; color: inherit; text-decoration: none;
@@ -268,13 +276,13 @@
     background: var(--rp-accent-light); border: 1px solid var(--rp-accent-dark);
     border-radius: 999px; font-size: 11.5px; font-weight: 700; color: #b45309;
   }
-  .rv-more-row { text-align: center; margin: 4px 0 10px; }
+  .rv-more-row { text-align: center; margin: 8px 0 14px; }
   .rv-more-row .rp-cta { width: auto; padding: 11px 22px; font-size: 14px; display: inline-flex; }
-  .im-section-title { font-size: 18px; font-weight: 700; margin: 24px 0 4px; }
-  .im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 8px; }
+  .im-section-title { font-size: 18px; font-weight: 700; margin: 34px 0 6px; }
+  .im-section-sub { font-size: 13px; color: var(--rp-text-2); margin-bottom: 10px; }
 
   /* ===== Запись ===== */
-  .bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 10px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+  .bk-dates { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin: 14px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
   .bk-date {
     flex-shrink: 0; min-width: 58px; padding: 10px 8px; text-align: center;
     border: 1.5px solid var(--rp-border); border-radius: 12px; background: #fff; cursor: pointer;
@@ -285,7 +293,7 @@
   .bk-date.on .bk-dow, .bk-date.on .bk-day { color: #78350f; }
   .bk-dow { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--rp-text-2); }
   .bk-day { font-size: 16px; font-weight: 800; color: var(--rp-text); }
-  .bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; margin: 10px 0; }
+  .bk-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; margin: 14px 0; }
   .bk-time {
     padding: 10px 0; text-align: center; font-size: 14px; font-weight: 600;
     border: 1.5px solid var(--rp-border); border-radius: 10px; background: #fff; cursor: pointer;
@@ -302,7 +310,7 @@
     display: inline-block; width: 10px; height: 10px; border-radius: 3px;
     background: #f3f4f6; border: 1px dashed #9ca3af; margin-right: 6px; vertical-align: -1px;
   }
-  .bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .bk-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
   .bk-input {
     width: 100%; padding: 13px 14px; border: 1.5px solid var(--rp-border); border-radius: 12px;
     font-size: 15px; background: #fff; color: var(--rp-text);
@@ -438,6 +446,7 @@
     <div class="im-map">
       <iframe id="imMapFrame" src="https://yandex.ru/map-widget/v1/?ll=37.705%2C55.733&z=11" loading="lazy" allowfullscreen></iframe>
     </div>
+    <a class="im-map-link" id="imMapLink" href="https://yandex.ru/maps/?ll=37.705%2C55.733&z=11" target="_blank" rel="noopener">Открыть на Яндекс.Картах →</a>
 
     <span class="rp-label">Дата</span>
     <div class="bk-dates" id="bkDates"></div>
@@ -482,7 +491,7 @@
   //
   // Ожидаемые листы (если называются иначе — поправьте SHEETS ниже):
   //   «Цены»    : Бренд | Модель | Поломка | Цена | Описание (первая строка — шапка)
-  //   «Занято»  : Дата  | Время
+  //   «Занято»  : Дата  | Время | Филиал (3-я колонка необязательна: без неё слот занят во ВСЕХ филиалах)
   //   «Отзывы»  : Дата  | Автор   | Текст   | Филиал (необязательная колонка)
   // Порядок колонок настраивается в COLS (нумерация с 0).
   // ================================================================
@@ -490,7 +499,7 @@
   var SHEETS = { prices: "Цены", busy: "Занято", reviews: "Отзывы" };
   var COLS = {
     prices:  { brand: 0, model: 1, problem: 2, price: 3, desc: 4 },
-    busy:    { date: 0, time: 1 },
+    busy:    { date: 0, time: 1, branch: 2 },  // колонка «Филиал» необязательна
     reviews: { date: 0, author: 1, text: 2, branch: 3 }
   };
   var SKIP_HEADER = true;
@@ -543,7 +552,10 @@
       try {
         var b = BRANCHES[branchIdx];
         mapFrame.src = mapUrl(b.lon, b.lat, 16, BRANCHES);
+        document.getElementById('imMapLink').href = 'https://yandex.ru/maps/?ll=' + b.lon + '%2C' + b.lat + '&z=17&pt=' + b.lon + '%2C' + b.lat + ',pm2rdl';
+        document.getElementById('imMapLink').innerText = 'Открыть на Яндекс.Картах: ' + b.name + ' →';
       } catch (e) {}
+      markBusy();
       updateBkSummary();
     });
   });
@@ -572,22 +584,25 @@
   // ===== Время: 10:00–21:00 =====
   var tEl = document.getElementById('bkTimes');
   for (var h = 10; h <= 21; h++) {
-    var t = document.createElement('div');
-    t.className = 'bk-time';
-    t.innerText = h + ':00';
-    t.addEventListener('click', function() {
-      tEl.querySelectorAll('.bk-time').forEach(function(x) { x.classList.remove('on'); });
-      this.classList.add('on');
-      bkTime = this.innerText;
-      updateBkSummary();
+    ['00', '30'].forEach(function(m) {
+      if (h === 21 && m === '30') return; // последний сеанс — 21:00
+      var t = document.createElement('div');
+      t.className = 'bk-time';
+      t.innerText = h + ':' + m;
+      t.addEventListener('click', function() {
+        tEl.querySelectorAll('.bk-time').forEach(function(x) { x.classList.remove('on'); });
+        this.classList.add('on');
+        bkTime = this.innerText;
+        updateBkSummary();
+      });
+      tEl.appendChild(t);
     });
-    tEl.appendChild(t);
   }
 
   // Занятые слоты: недоступны для выбора, выбор снимается, если слот стал занят
   function markBusy() {
     if (!bkDateKey) return;
-    var busy = busyByDate[bkDateKey] || [];
+    var busy = busyListFor(branchIdx !== -1 ? BRANCHES[branchIdx].name : null, bkDateKey);
     tEl.querySelectorAll('.bk-time').forEach(function(el) {
       var isBusy = busy.indexOf(el.innerText) !== -1;
       el.classList.toggle('bk-busy', isBusy);
@@ -699,6 +714,13 @@
   }
   document.getElementById('bkName').addEventListener('input', updateBkSummary);
   document.getElementById('bkPhone').addEventListener('input', updateBkSummary);
+  document.getElementById('bkPhone').addEventListener('input', function() {
+    var d = this.value.replace(/\D/g, '');
+    if (!d) { this.value = ''; return; }
+    if (d.charAt(0) === '8') d = '7' + d.slice(1);
+    if (d.charAt(0) !== '7') d = '7' + d;
+    this.value = '+' + d.slice(0, 11);
+  });
 
   // ===== Отправка записи =====
   document.getElementById('bkSubmit').addEventListener('click', function() {
@@ -709,7 +731,7 @@
       return;
     }
     // локальная перепроверка: слот мог заняться после последнего обновления
-    var busyLocal = (busyByDate[bkDateKey] || []);
+    var busyLocal = busyListFor(BRANCHES[branchIdx].name, bkDateKey);
     if (busyLocal.indexOf(bkTime) !== -1) {
       markBusy();
       done.innerHTML = '⏰ Это время уже занято. Выберите другое — серым отмечено занятое.';
@@ -749,8 +771,9 @@
     .then(function(resp) {
       btn.disabled = false; btn.style.opacity = ''; btn.innerText = 'Записаться на ремонт';
       if (resp && resp.ok) {
-        if (!busyByDate[selKey]) busyByDate[selKey] = [];
-        if (busyByDate[selKey].indexOf(selTime) === -1) busyByDate[selKey].push(selTime);
+        var doneKey = BRANCHES[branchIdx].name + '||' + selKey;
+        if (!busyByDate[doneKey]) busyByDate[doneKey] = [];
+        if (busyByDate[doneKey].indexOf(selTime) === -1) busyByDate[doneKey].push(selTime);
         saveCache();
         markBusy();
         document.getElementById('bkSummary').classList.remove('show');
@@ -761,8 +784,9 @@
           '<br><a href="' + TG_LINK + '?text=' + encodeURIComponent(info.text) + '" target="_blank" rel="noopener">Написать нам в Telegram</a>';
         done.classList.add('show');
       } else if (resp && resp.error === 'busy') {
-        if (!busyByDate[selKey]) busyByDate[selKey] = [];
-        if (busyByDate[selKey].indexOf(selTime) === -1) busyByDate[selKey].push(selTime);
+        var doneKey2 = BRANCHES[branchIdx].name + '||' + selKey;
+        if (!busyByDate[doneKey2]) busyByDate[doneKey2] = [];
+        if (busyByDate[doneKey2].indexOf(selTime) === -1) busyByDate[doneKey2].push(selTime);
         bkTime = null;
         markBusy();
         updateBkSummary();
@@ -848,15 +872,26 @@
     return m ? ('0' + m[1]).slice(-2) + ':' + m[2] : t.trim();
   }
 
-  function normBusy(b) {
+  // Данные из Apps Script (календарь) приходят без разбивки по филиалам -> '*'
+  function normBusyAny(b) {
     var out = {};
     for (var k in (b || {})) {
-      var nk = normDateKey(k);
-      if (!out[nk]) out[nk] = [];
+      var key = '*||' + normDateKey(k);
+      if (!out[key]) out[key] = [];
       (b[k] || []).forEach(function(t) {
         t = normTime(t);
-        if (out[nk].indexOf(t) === -1) out[nk].push(t);
+        if (out[key].indexOf(t) === -1) out[key].push(t);
       });
+    }
+    return out;
+  }
+
+  // Миграция старого кэша (ключи-даты) в новый формат
+  function migrateBusy(raw) {
+    var out = {};
+    for (var k in (raw || {})) {
+      if (k.indexOf('||') !== -1) { out[k] = raw[k]; continue; }
+      out['*||' + normDateKey(k)] = raw[k];
     }
     return out;
   }
@@ -872,6 +907,17 @@
       });
     }
     return base;
+  }
+
+  // Занятые слоты для конкретного филиала на дату (с учётом общих '*')
+  function busyListFor(branchName, dateKey) {
+    if (!dateKey) return [];
+    var list = (busyByDate['*||' + dateKey] || []).slice();
+    if (branchName) {
+      var own = busyByDate[branchName + '||' + dateKey] || [];
+      own.forEach(function(t) { if (list.indexOf(t) === -1) list.push(t); });
+    }
+    return list;
   }
 
   // ---------- преобразование строк таблицы в данные калькулятора ----------
@@ -895,6 +941,7 @@
     return out;
   }
 
+  // Занятые слоты хранятся по ключу «филиал||дата»; '*' = все филиалы сразу
   function rowsToBusy(rows) {
     var out = {};
     if (!rows) return out;
@@ -904,7 +951,8 @@
       var dateRaw = cellVal(r[COLS.busy.date]);
       var timeRaw = r[COLS.busy.time]; // НЕ через cellVal: время может быть ячейкой-Date
       if (!dateRaw || timeRaw === '' || timeRaw === null || timeRaw === undefined) continue;
-      var k = normDateKey(dateRaw);
+      var branch = ('' + (r[COLS.busy.branch] || '')).trim() || '*';
+      var k = branch + '||' + normDateKey(dateRaw);
       var t = normTime(timeRaw);
       if (!t) continue;
       if (!out[k]) out[k] = [];
@@ -1027,7 +1075,7 @@
       var cached = loadCache();
       if (cached && cached.prices && Object.keys(cached.prices).length) {
         DATA = sanitizePrices(cached.prices);
-        busyByDate = normBusy(cached.busy || {});
+        busyByDate = migrateBusy(cached.busy || {});
         reviews = Array.isArray(cached.reviews) ? cached.reviews : [];
         tryInit();
       }
@@ -1057,7 +1105,7 @@
       })
       .then(function(json) {
         if (!json || json.error) throw new Error((json && json.error) || 'bad data');
-        applyRemote(json.prices || {}, normBusy(json.busy || {}), json.reviews || null);
+        applyRemote(json.prices || {}, normBusyAny(json.busy || {}), json.reviews || null);
       });
   }
 
@@ -1068,7 +1116,7 @@
       .then(function(res) { return res.json(); })
       .then(function(json) {
         if (!json || json.error || !json.busy) return;
-        busyByDate = mergeBusy(busyByDate, normBusy(json.busy));
+        busyByDate = mergeBusy(busyByDate, normBusyAny(json.busy));
         saveCache();
         markBusy();
       })
